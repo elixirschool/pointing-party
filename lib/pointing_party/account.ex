@@ -1,25 +1,25 @@
-defmodule PointingParty.User do
+defmodule PointingParty.Account do
   use Ecto.Schema
   import Ecto.Changeset
-  alias PointingParty.User
+  alias PointingParty.Account
 
-  schema "users" do
+  schema "accounts" do
     field :username, :string
   end
 
   def create(attrs) do
-    changeset = changeset(%User{}, attrs)
+    changeset = changeset(%Account{}, attrs)
     if changeset.valid? do
-      user =  apply_changes(changeset)
-      {:ok, user}
+      account = apply_changes(changeset)
+      {:ok, account}
     else
       {:error, %{changeset | action: :insert}}
     end
   end
 
   @doc false
-  def changeset(user, attrs \\ %{}) do
-    user
+  def changeset(account, attrs \\ %{}) do
+    account
     |> cast(attrs, [:username])
     |> validate_required([:username])
   end

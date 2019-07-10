@@ -19,6 +19,10 @@ defmodule PointingPartyWeb.Router do
     post "/login", SessionController, :create
     delete "/logout", SessionController, :delete
     get "/", PageController, :index
+  end
+
+  scope "/", PointingPartyWeb do
+    pipe_through [:browser, PointingPartyWeb.Plugs.Auth]
     get "/cards", CardController, :index
   end
 
