@@ -15,8 +15,11 @@ defmodule PointingPartyWeb.Router do
 
   scope "/", PointingPartyWeb do
     pipe_through :browser
-
+    get "/login", SessionController, :new
+    post "/login", SessionController, :create
+    delete "/logout", SessionController, :delete
     get "/", PageController, :index
+    get "/cards", CardController, :index
   end
 
   # Other scopes may use custom stacks.
