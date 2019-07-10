@@ -5,6 +5,6 @@ defmodule PointingPartyWeb.LayoutHelpers do
   Generates tag for inlined form input errors.
   """
   def signed_in?(conn) do
-    conn.assigns[:username]
+    not is_nil(conn.assigns[:username])
   end
 end

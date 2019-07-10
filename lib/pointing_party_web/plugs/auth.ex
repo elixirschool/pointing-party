@@ -6,7 +6,7 @@ defmodule PointingPartyWeb.Plugs.Auth do
 
   def call(conn, _default) do
     case authenticate(conn) do
-      nil -> redirect(conn, to: "/login") |> halt()
+      nil -> conn |> redirect(to: "/login") |> halt()
       username -> assign(conn, :username, username)
     end
   end
