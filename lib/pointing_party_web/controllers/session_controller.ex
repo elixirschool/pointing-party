@@ -8,14 +8,12 @@ defmodule PointingPartyWeb.SessionController do
   end
 
   def create(conn, params) do
-    changeset = User.changeset(%User{}, params["user"])
-    if changeset.valid? do
-      user =  Ecto.Changeset.apply_changes(changeset)
-      put_session(conn, :username, user.username)
-      |> redirect(to: "/cards") |> halt()
-    else
-      changeset = %{changeset | action: :insert}
-      render(conn, "new.html", changeset: changeset)
+    case User.create(params["user"]) do
+      {:ok, user} ->
+        put_session(conn, :username, user.username)
+        |> redirect(to: "/cards") |> halt()
+      {:error, changeset} ->
+        render(conn, "new.html", changeset: changeset)
     end
   end
 
