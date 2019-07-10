@@ -13,14 +13,15 @@
         <nav role="navigation">
           <ul>
             <%= if signed_in?(@conn) do %>
+              <li>Hi, <%= @conn.assigns.username %></li>
               <li><%= link "Log Out", to: Routes.session_path(@conn, :delete), method: :delete, class: "nav-link" %></li>
             <%= else %>
               <li><%= link "Log In", to: Routes.session_path(@conn, :new), class: "nav-link" %></li>
             <%= end %>
           </ul>
         </nav>
-        <a href="http://phoenixframework.org/" class="phx-logo">
-          <img src="<%= Routes.static_path(@conn, "/images/phoenix.png") %>" alt="Phoenix Framework Logo"/>
+        <a href="/" class="phx-logo">
+          <img src="<%= Routes.static_path(@conn, "/images/pp-logo.png") %>" alt="Phoenix Framework Logo"/>
         </a>
       </section>
     </header>
