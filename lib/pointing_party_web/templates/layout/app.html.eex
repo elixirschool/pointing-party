@@ -4,7 +4,7 @@
     <meta charset="utf-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>PointingParty · Phoenix Framework</title>
+    <title>PointingParty</title>
     <link rel="stylesheet" href="<%= Routes.static_path(@conn, "/css/app.css") %>"/>
   </head>
   <body>
@@ -12,11 +12,16 @@
       <section class="container">
         <nav role="navigation">
           <ul>
-            <li><a href="https://hexdocs.pm/phoenix/overview.html">Get Started</a></li>
+            <%= if signed_in?(@conn) do %>
+              <li>Hi, <%= @conn.assigns.username %></li>
+              <li><%= link "Log Out", to: Routes.session_path(@conn, :delete), method: :delete, class: "nav-link" %></li>
+            <%= else %>
+              <li><%= link "Log In", to: Routes.session_path(@conn, :new), class: "nav-link" %></li>
+            <%= end %>
           </ul>
         </nav>
-        <a href="http://phoenixframework.org/" class="phx-logo">
-          <img src="<%= Routes.static_path(@conn, "/images/phoenix.png") %>" alt="Phoenix Framework Logo"/>
+        <a href="/" class="phx-logo">
+          <img src="<%= Routes.static_path(@conn, "/images/pointing-party-logo.png") %>" alt="Phoenix Framework Logo"/>
         </a>
       </section>
     </header>

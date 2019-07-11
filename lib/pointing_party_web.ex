@@ -40,6 +40,7 @@ defmodule PointingPartyWeb do
       use Phoenix.HTML
 
       import PointingPartyWeb.ErrorHelpers
+      import PointingPartyWeb.LayoutHelpers
       import PointingPartyWeb.Gettext
       alias PointingPartyWeb.Router.Helpers, as: Routes
     end

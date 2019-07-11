@@ -1,0 +1,9 @@
+<h1>Sign In</h1>
+<%= form_for @changeset, Routes.session_path(@conn, :create), fn f -> %>
+  <label>
+    Username: <%= text_input f, :username %>
+  </label>
+  <%=  error_tag f, :username %>  
+
+  <%= submit "Sign In" %>
+<% end %>
