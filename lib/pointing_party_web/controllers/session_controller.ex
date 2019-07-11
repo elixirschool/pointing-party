@@ -11,8 +11,10 @@ defmodule PointingPartyWeb.SessionController do
   def create(conn, params) do
     case Auth.login(params["account"]) do
       {:ok, %{username: username}} ->
-        put_session(conn, :username, username)
-        |> redirect(to: "/cards") |> halt()
+        conn
+        |> put_session(:username, username)
+        |> redirect(to: "/cards")
+        |> halt()
       {:error, changeset} ->
         render(conn, "new.html", changeset: changeset)
     end
