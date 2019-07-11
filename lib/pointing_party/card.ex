@@ -1,6 +1,7 @@
 defmodule PointingParty.Card do
   use Ecto.Schema
   import Ecto.Changeset
+  import Ecto.Query
   alias PointingParty.Repo
   alias PointingParty.Card
 
@@ -20,5 +21,11 @@ defmodule PointingParty.Card do
 
   def get!(id) do
     Repo.get!(Card, id)
+  end
+
+  def first do
+    Card
+    |> first
+    |> Repo.one()
   end
 end
