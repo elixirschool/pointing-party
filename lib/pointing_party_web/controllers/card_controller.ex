@@ -4,7 +4,7 @@ defmodule PointingPartyWeb.CardController do
 
   def index(conn, _params) do
     # temporary, just to get something on the page for now
-    card = Card.get!(1)
+    card = Card.first()
     render(conn, "index.html", card: card)
   end
 end
