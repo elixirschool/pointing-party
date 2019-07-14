@@ -10,10 +10,13 @@
         <div class="col-2">
           <label for="storyPoints">Story Points</label>
           <select class="form-control" id="storyPoints">
-            <option>0</option>
-            <option>1</option>
-            <option>3</option>
-            <option>5</option>
+            <%= Enum.map(@points, fn point ->  %>
+              <%= if @card.points == point do %>
+                <option selected="selected'"><%= point %></option>
+              <% else %>
+                <option><%= point %></option>
+              <% end %>
+            <% end) %>
           </select>
         </div>
       </div>
