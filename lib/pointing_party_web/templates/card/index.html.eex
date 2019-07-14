@@ -21,6 +21,6 @@
     <a href="#" class="btn btn-primary">Calculate Points</a>
   </div>
   <div class="card-footer text-muted">
-    <%= @card.inserted_at %>
+    created at: <%= @card.inserted_at %>
   </div>
 </div>
