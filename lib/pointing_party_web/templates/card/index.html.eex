@@ -1,1 +1,26 @@
-<%= @card.title %>
+
+<div class="card text-left">
+  <div class="card-header">
+    <h2><%= @card.title %></h2>
+  </div>
+  <div class="card-body">
+    <p class="card-text"><%= @card.description %></p>
+    <div class="form-group text-left">
+      <div class="form-row align-items-center">
+        <div class="col-2">
+          <label for="storyPoints">Story Points</label>
+          <select class="form-control" id="storyPoints">
+            <option>0</option>
+            <option>1</option>
+            <option>3</option>
+            <option>5</option>
+          </select>
+        </div>
+      </div>
+  </div>
+    <a href="#" class="btn btn-primary">Calculate Points</a>
+  </div>
+  <div class="card-footer text-muted">
+    <%= @card.inserted_at %>
+  </div>
+</div>
