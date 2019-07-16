@@ -5,7 +5,6 @@ defmodule PointingParty.Card do
   alias PointingParty.Repo
   alias PointingParty.Card
 
-  def points_range, do: [0, 1, 3, 5]
 
   schema "cards" do
     field :description, :string
@@ -15,12 +14,14 @@ defmodule PointingParty.Card do
     timestamps()
   end
 
+  def points_range, do: [0, 1, 3, 5]
+
   @doc false
   def changeset(card, attrs) do
     card
     |> cast(attrs, [:title, :description, :points])
     |> validate_required([:title, :description])
-    |> validate_inclusion(:points, Card.points_range)
+    |> validate_inclusion(:points, Card.points_range())
   end
 
   def get!(id) do
