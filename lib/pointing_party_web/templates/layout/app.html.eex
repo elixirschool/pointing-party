@@ -17,9 +17,9 @@
             <%= if signed_in?(@conn) do %>
               <li>Hi, <%= @conn.assigns.username %></li>
               <li><%= link "Log Out", to: Routes.session_path(@conn, :delete), method: :delete, class: "nav-link" %></li>
-            <%= else %>
+            <% else %>
               <li><%= link "Log In", to: Routes.session_path(@conn, :new), class: "nav-link" %></li>
-            <%= end %>
+            <% end %>
           </ul>
         </nav>
         <a href="/" class="phx-logo">

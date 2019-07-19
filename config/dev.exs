@@ -1,17 +1,5 @@
 use Mix.Config
 
-# Configure your database
-config :pointing_party, PointingParty.Repo,
-  username: "postgres",
-  password: "postgres",
-  database: "pointing_party_dev",
-  hostname: "localhost",
-  show_sensitive_data_on_connection_error: true,
-  pool_size: 10
-
-# For development, we disable any cache and enable
-# debugging and code reloading.
-#
 # The watchers configuration can be used to run external
 # watchers to your application. For example, we use it
 # with webpack to recompile .js and .css sources.

@@ -1,5 +1,6 @@
 defmodule PointingParty.Factory do
-  use ExMachina.Ecto, repo: PointingParty.Repo
+  use ExMachina
+
   alias PointingParty.Card
 
   def card_factory do
