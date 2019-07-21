@@ -15,4 +15,10 @@ defmodule PointingPartyWeb.RoomChannel do
 
     {:noreply, socket}
   end
+
+  def handle_in("user_estimated", %{"points" => points}, socket) do
+    broadcast!(socket, "user_estimated", %{points: points, userId: socket.assigns.username})
+
+    {:noreply, socket}
+  end
 end

@@ -9,20 +9,16 @@
         <div class="form-group text-left">
           <div class="form-row align-items-center">
             <div class="col-2">
-              <label for="storyPoints">Story Points</label>
-              <select class="form-control" id="storyPoints">
+              <label for="story-points">Story Points</label>
+              <select class="form-control story-points" id="story-points">
                 <%= Enum.map(@points, fn point ->  %>
-                  <%= if @card.points == point do %>
-                    <option selected="selected'"><%= point %></option>
-                  <% else %>
-                    <option><%= point %></option>
-                  <% end %>
+                  <option><%= point %></option>
                 <% end) %>
               </select>
             </div>
           </div>
       </div>
-        <a href="#" class="btn btn-primary">Calculate Points</a>
+        <a href="#" class="btn btn-primary calculate-points">Calculate Points</a>
       </div>
 
       <div class="card-footer text-muted">
