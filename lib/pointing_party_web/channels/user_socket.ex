@@ -2,7 +2,7 @@ defmodule PointingPartyWeb.UserSocket do
   use Phoenix.Socket
 
   ## Channels
-  # channel "room:*", PointingPartyWeb.RoomChannel
+  channel "room:lobby", PointingPartyWeb.RoomChannel
 
   # Socket params are passed from the client and can
   # be used to verify and authenticate a user. After
@@ -15,8 +15,8 @@ defmodule PointingPartyWeb.UserSocket do
   #
   # See `Phoenix.Token` documentation for examples in
   # performing token verification on connect.
-  def connect(_params, socket, _connect_info) do
-    {:ok, socket}
+  def connect(%{"username" => username}, socket, _connect_info) do
+    {:ok, assign(socket, :username, username)}
   end
 
   # Socket id's are topics that allow you to identify all sockets for a given user:
