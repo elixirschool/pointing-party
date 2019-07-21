@@ -7,20 +7,8 @@ const channel = socket.channel('room:lobby', {})
 const presence = new Presence(channel)
 
 presence.onSync(() => {
-  const users = document.querySelector('.users')
-  users.innerHTML = ''
-
-  presence.list((id, _) => {
-    const user = document.createElement('li')
-    user.setAttribute('class', id)
-    user.appendChild(document.createTextNode(id))
-
-    const estimate = document.createElement('span')
-    estimate.setAttribute('class', 'user-estimate')
-    user.appendChild(estimate)
-
-    users.appendChild(user)
-  })
+  const usersElem = document.querySelector('.users')
+  updateUsers(usersElem, presence)
 })
 
 if (window.pointingParty.username) {
@@ -35,10 +23,26 @@ calculateButton.addEventListener('click', event => {
   channel.push('user_estimated', { points: storyPoints.value })
 })
 
-
 channel.on("user_estimated", ({ points, userId }) => {
   const user = document.querySelector(`.${userId} .user-estimate`)
   user.innerHTML = points
 })
+
+const updateUsers = (usersElem, presence) => {
+  usersElem.innerHTML = ''
+  presence.list(updateUser(usersElem))
+}
+
+const updateUser = usersElem => (userId, _) => {
+  const userElem = document.createElement('li')
+  userElem.setAttribute('class', userId)
+  userElem.appendChild(document.createTextNode(userId))
+
+  const estimateElem = document.createElement('span')
+  estimateElem.setAttribute('class', 'user-estimate')
+  userElem.appendChild(estimateElem)
+
+  usersElem.appendChild(userElem)
+}
 
 export default socket
