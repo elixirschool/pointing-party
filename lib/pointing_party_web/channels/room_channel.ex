@@ -17,7 +17,7 @@ defmodule PointingPartyWeb.RoomChannel do
   end
 
   def handle_in("user_estimated", %{"points" => points}, socket) do
-    broadcast!(socket, "user_estimated", %{points: points, userId: socket.assigns.username})
+    Presence.update(socket, socket.assigns.username, fn old -> Map.put(old, :points, points) end)
 
     {:noreply, socket}
   end
