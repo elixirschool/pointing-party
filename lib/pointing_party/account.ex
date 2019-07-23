@@ -1,6 +1,8 @@
 defmodule PointingParty.Account do
   use Ecto.Schema
+
   import Ecto.Changeset
+
   alias PointingParty.Account
 
   schema "accounts" do

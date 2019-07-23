@@ -1,36 +1,33 @@
 defmodule PointingParty.Card do
   use Ecto.Schema
-  import Ecto.Changeset
-  import Ecto.Query
-  alias PointingParty.Repo
-  alias PointingParty.Card
 
+  import Ecto.Changeset
+
+  @pointing_scale [0, 1, 3, 5]
 
   schema "cards" do
     field :description, :string
-    field :title, :string
     field :points, :integer
+    field :title, :string
 
     timestamps()
   end
 
-  def points_range, do: [0, 1, 3, 5]
+  def points_range, do: @pointing_scale
 
   @doc false
   def changeset(card, attrs) do
     card
     |> cast(attrs, [:title, :description, :points])
     |> validate_required([:title, :description])
-    |> validate_inclusion(:points, Card.points_range())
+    |> validate_inclusion(:points, @pointing_scale)
   end
 
-  def get!(id) do
-    Repo.get!(Card, id)
-  end
+  def first, do: List.first(cards())
 
-  def first do
-    Card
-    |> first
-    |> Repo.one()
+  defp cards do
+    :pointing_party
+    |> Application.get_env(:cards)
+    |> Enum.map(&struct(__MODULE__, &1))
   end
 end

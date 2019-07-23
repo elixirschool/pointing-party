@@ -1,20 +1,17 @@
 defmodule PointingPartyWeb.CardControllerTest do
   use PointingPartyWeb.ConnCase
-  import PointingParty.Factory
 
   @username "test_user"
 
   describe "authenticated user" do
     setup  %{conn: conn} do
-      conn = conn
-      |> Plug.Test.init_test_session(username: @username)
-      {:ok, %{conn: conn}}
+      auth_conn = Plug.Test.init_test_session(conn, username: @username)
+      {:ok, %{conn: auth_conn}}
     end
 
     test "GET /cards", %{conn: conn} do
-      insert(:card)
       conn = get(conn, "/cards")
-      assert html_response(conn, 200) =~ "Ticket Title0"
+      assert html_response(conn, 200) =~ "Support loading data from a database"
     end
   end
 

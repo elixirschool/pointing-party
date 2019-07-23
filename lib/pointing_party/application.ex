@@ -7,7 +7,6 @@ defmodule PointingParty.Application do
 
   def start(_type, _args) do
     children = [
-      PointingParty.Repo,
       PointingPartyWeb.Endpoint,
       PointingPartyWeb.Presence
     ]
