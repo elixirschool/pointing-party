@@ -23,9 +23,7 @@ defmodule PointingParty.Card do
     |> validate_inclusion(:points, @pointing_scale)
   end
 
-  def first, do: List.first(cards())
-
-  defp cards do
+  def cards do
     :pointing_party
     |> Application.get_env(:cards)
     |> Enum.map(&struct(__MODULE__, &1))
