@@ -12,6 +12,6 @@ defmodule PointingPartyWeb.Plugs.Auth do
   end
 
   defp authenticate(conn) do
-     get_session(conn, :username)
+    get_session(conn, :username)
   end
 end

@@ -10,7 +10,6 @@
 # We recommend using the bang functions (`insert!`, `update!`
 # and so on) as they will fail if something goes wrong.
 
-
 alias PointingParty.{Card, Repo}
 
 cards = [
@@ -21,7 +20,7 @@ cards = [
   %{title: "Fifth card", description: "This is a description of the fifth card."},
   %{title: "Sixth card", description: "This is a description of the sixth card."},
   %{title: "Seventh card", description: "This is a description of the seventh card."},
-  %{title: "Eighth card", description: "This is a description of the eighth card."},
+  %{title: "Eighth card", description: "This is a description of the eighth card."}
 ]
 
 Enum.each(cards, fn card ->

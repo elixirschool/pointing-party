@@ -3,11 +3,10 @@ defmodule PointingParty.Repo.Migrations.CreateCards do
 
   def change do
     create table(:cards) do
-      add :title, :string
-      add :description, :string
+      add(:title, :string)
+      add(:description, :string)
 
       timestamps()
     end
-
   end
 end
