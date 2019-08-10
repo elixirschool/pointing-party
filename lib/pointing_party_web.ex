@@ -23,6 +23,7 @@ defmodule PointingPartyWeb do
 
       import Plug.Conn
       import PointingPartyWeb.Gettext
+      import Phoenix.LiveView.Controller, only: [live_render: 3]
       alias PointingPartyWeb.Router.Helpers, as: Routes
     end
   end
@@ -42,6 +43,7 @@ defmodule PointingPartyWeb do
       import PointingPartyWeb.ErrorHelpers
       import PointingPartyWeb.LayoutHelpers
       import PointingPartyWeb.Gettext
+      import Phoenix.LiveView, only: [live_render: 2, live_render: 3, live_link: 1, live_link: 2]
       alias PointingPartyWeb.Router.Helpers, as: Routes
     end
   end
@@ -51,6 +53,7 @@ defmodule PointingPartyWeb do
       use Phoenix.Router
       import Plug.Conn
       import Phoenix.Controller
+      import Phoenix.LiveView.Router
     end
   end
 
