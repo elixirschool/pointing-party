@@ -3,7 +3,7 @@
   <label>
     Username: <%= text_input f, :username %>
   </label>
-  <%=  error_tag f, :username %>  
+  <%=  error_tag f, :username %>
 
   <%= submit "Sign In" %>
 <% end %>
