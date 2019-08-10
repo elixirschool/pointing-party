@@ -5,6 +5,7 @@ config :pointing_party,
 
 # Configures the endpoint
 config :pointing_party, PointingPartyWeb.Endpoint,
+  live_view: [signing_salt: "SECRET_SALT"],
   url: [host: "localhost"],
   secret_key_base: "w1I+WClCAIRKxSX5/M7gFHQLa9pnn4AuVDO6XmUgTZxJl+VqMOr2Q5Ou+2CSoLdJ",
   render_errors: [view: PointingPartyWeb.ErrorView, accepts: ~w(html json)],
