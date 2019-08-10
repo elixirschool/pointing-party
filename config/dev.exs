@@ -49,7 +49,8 @@ config :pointing_party, PointingPartyWeb.Endpoint,
       ~r"priv/static/.*(js|css|png|jpeg|jpg|gif|svg)$",
       ~r"priv/gettext/.*(po)$",
       ~r"lib/pointing_party_web/{live,views}/.*(ex)$",
-      ~r"lib/pointing_party_web/templates/.*(eex)$"
+      ~r"lib/pointing_party_web/templates/.*(eex)$",
+      ~r"lib/pointing_party_web/live/.*(ex)$"
     ]
   ]
 
