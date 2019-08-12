@@ -26,11 +26,11 @@ const renderTemplate = function(parent, template) {
   parent.appendChild(fragment)
 }
 
-const startButton = document.querySelector('.start-button')
-startButton.addEventListener('click', e => {
-  driving = true;
-  channel.push('start_pointing', {})
-})
+// const startButton = document.querySelector('.start-button')
+// startButton.addEventListener('click', e => {
+//   driving = true;
+//   channel.push('start_pointing', {})
+// })
 
 const cardContainer = document.querySelector('.card-container')
 channel.on('new_card', state => {
