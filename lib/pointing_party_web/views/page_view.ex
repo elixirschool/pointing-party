@@ -1,3 +1,3 @@
 defmodule PointingPartyWeb.PageView do
-#  use PointingPartyWeb, :view
+  use PointingPartyWeb, :view
 end

@@ -1,0 +1,21 @@
+<div class="row">
+  <div class="card-container col-10">
+    <%= if !@party_has_started do %>
+      <div class="col-md-4 text-center">
+        <button phx-click="start_party" class="btn-primary">Start the Party!</button>
+      </div>
+    <% else %>
+      <%= Phoenix.View.render(PointingPartyWeb.CardView, "show.html", assigns) %>
+    <% end %>
+  </div>
+
+  <div class="col-2">
+    <h2>Users</h2>
+    <dl class="row users">
+      <%= for user <- @users do %>
+        <dt><%= user %></dt>
+        <dd></dd>
+      <% end %>
+    </dl>
+  </div>
+</div>
