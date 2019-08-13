@@ -1,7 +1,8 @@
-defmodule PointingPartyWeb.LiveCardView do
+defmodule PointingPartyWeb.CardLive do
   use Phoenix.LiveView
 
   alias PointingParty.Card
+  alias PointingPartyWeb.Presence
 
   def render(assigns) do
     # render("index.html", assigns)
@@ -20,14 +21,24 @@ defmodule PointingPartyWeb.LiveCardView do
       <div class="col-2">
         <h2>Users</h2>
         <dl class="row users">
+          <%= for user <- @users do %>
+            <dt><%= user %></dt>
+            <dd></dd>
+          <% end %>
         </dl>
       </div>
     </div>
     """
   end
 
-  def mount(_session, socket) do
-    {:ok, assign(socket, party_has_started: false)}
+  def mount(%{username: username}, socket) do
+    {:ok, _} = Presence.track(self(), "users", username, %{})
+    users =
+      "users"
+      |> Presence.list()
+      |> Map.keys()
+
+    {:ok, assign(socket, party_has_started: false, users: users)}
   end
 
   def handle_event("start_party", _, socket) do
