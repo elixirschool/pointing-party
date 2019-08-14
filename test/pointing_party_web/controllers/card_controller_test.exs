@@ -4,7 +4,7 @@ defmodule PointingPartyWeb.CardControllerTest do
   @username "test_user"
 
   describe "authenticated user" do
-    setup  %{conn: conn} do
+    setup %{conn: conn} do
       auth_conn = Plug.Test.init_test_session(conn, username: @username)
       {:ok, %{conn: auth_conn}}
     end

@@ -32,6 +32,7 @@ defmodule PointingPartyWeb.RoomChannel do
   end
 
   defp initialize_state(%{assigns: %{cards: _cards}} = socket), do: socket
+
   defp initialize_state(socket) do
     [first | cards] = Card.cards()
 

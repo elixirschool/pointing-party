@@ -41,7 +41,8 @@ defmodule PointingParty.MixProject do
       {:gettext, "~> 0.11"},
       {:jason, "~> 1.0"},
       {:plug_cowboy, "~> 2.0"},
-      {:ex_machina, "~> 2.3", only: :test}
+      {:ex_machina, "~> 2.3", only: :test},
+      {:stream_data, "~> 0.1", only: :test}
     ]
   end
 end

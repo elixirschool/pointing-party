@@ -11,6 +11,7 @@ defmodule PointingParty.Account do
 
   def create(attrs) do
     changeset = changeset(%Account{}, attrs)
+
     if changeset.valid? do
       account = apply_changes(changeset)
       {:ok, account}

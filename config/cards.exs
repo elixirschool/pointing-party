@@ -15,7 +15,6 @@ config :pointing_party,
       Update the application to save an individual's vote and the final card points to the database.
       """
     },
-
     %{
       title: "Add Guardian dependency",
       description: """
@@ -34,5 +33,5 @@ config :pointing_party,
       description: """
       Update our existing authentication flow to use the newly created Auth module.
       """
-    },
+    }
   ]
