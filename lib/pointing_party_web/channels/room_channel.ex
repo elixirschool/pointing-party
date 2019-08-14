@@ -1,6 +1,6 @@
 defmodule PointingPartyWeb.RoomChannel do
   use PointingPartyWeb, :channel
-
+  alias PointingParty.Card
   def join("room:lobby", _payload, socket) do
     send(self(), :after_join)
 
