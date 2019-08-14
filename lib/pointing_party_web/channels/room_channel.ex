@@ -30,7 +30,6 @@ defmodule PointingPartyWeb.RoomChannel do
 
   def handle_in("finalized_points", %{"points" => points}, socket) do
     updated_socket = save_vote_next_card(points, socket)
-    # clear_user_points(socket)
     broadcast!(updated_socket, "new_card", %{card: current_card(updated_socket)})
     {:reply, :ok, updated_socket}
   end

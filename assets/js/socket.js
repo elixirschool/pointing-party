@@ -1,32 +1,19 @@
 import { Socket, Presence } from 'phoenix'
-import updateUsers  from './users'
-
 const socket = new Socket('/socket', {params: {username: window.pointingParty.username}})
 socket.connect()
 
-const channel = socket.channel('room:lobby', {})
-const presence = new Presence(channel)
-
-presence.onSync(() => updateUsers(presence))
-
-let driving = false
-
-if (window.pointingParty.username) {
-  channel.join()
-    .receive('ok', resp => { console.log('Joined successfully', resp) })
-    .receive('error', resp => { console.log('Unable to join', resp) })
-}
+let driving = false;
 
 const startButton = document.querySelector('.start-button')
 startButton.addEventListener('click', e => {
   driving = true;
-  channel.push('start_pointing', {})
+  // send 'start_pointing' message to the channel here
 })
 
 const nextCardButtons = document.getElementsByClassName('next-card')
 for (let i = 0;i < nextCardButtons.length; i++) {
   nextCardButtons[i].addEventListener('click', e => {
-    channel.push('finalized_points', {points: e.target.value})
+    // send 'finalized_points' message to the channel here
   })
 }
 
@@ -34,10 +21,15 @@ document
   .querySelector('.calculate-points')
   .addEventListener('click', event => {
     const storyPoints = document.querySelector('.story-points')
-    channel.push('user_estimated', { points: storyPoints.value })
+    // send 'user_estimated' to the channel here
   })
 
-channel.on('new_card', state => {
+// call the relevant function defined below when you receive the following events from the channel:
+// 'next_card'
+// 'winner'
+// 'tie'
+
+function showCard(state) {
   document
     .querySelector('.start-button')
     .style.display = "none"
@@ -59,20 +51,9 @@ channel.on('new_card', state => {
   document
     .querySelector('.ticket-description')
     .innerHTML = state.card.description
-})
-
-const renderVotingResults = function(template) {
-  const pointContainer = document.querySelector('.points-container')
-  renderTemplate(pointContainer, template)
-
-  document
-    .querySelector('.next-card')
-    .addEventListener('click', e => {
-      channel.push('finalized_points', { points: e.target.value })
-    })
 }
 
-channel.on('winner', state => {
+function showWinner(state) {
   document
     .querySelector('.winner')
     .style.display = "block"
@@ -88,9 +69,9 @@ channel.on('winner', state => {
   document
     .querySelector('.next-card')
     .disabled = !driving
-})
+}
 
-channel.on('tie', state => {
+function showTie(state) {
   document
     .querySelector('.tie')
     .style.display = "block"
@@ -121,6 +102,6 @@ channel.on('tie', state => {
     .querySelector('.tie')
     .getElementsByClassName('next-card')[1]
     .disabled = !driving
-})
+}
 
 export default socket
