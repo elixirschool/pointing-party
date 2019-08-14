@@ -11,7 +11,7 @@ defmodule PointingPartyWeb.CardControllerTest do
 
     test "GET /cards", %{conn: conn} do
       conn = get(conn, "/cards")
-      assert html_response(conn, 200) =~ "Support loading data from a database"
+      assert html_response(conn, 200) =~ "Start the Party!"
     end
   end
 
