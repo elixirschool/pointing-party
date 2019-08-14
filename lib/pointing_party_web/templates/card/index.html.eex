@@ -1,7 +1,40 @@
 <div class="row">
   <div class="card-container col-10">
-    <div class="col-md-4 text-center"> 
-      <button class="start-button btn btn-primary">Start the Party!</button> 
+    <div class="col-md-12 text-center">
+      <button display="block" class="start-button btn btn-primary">Start the Party!</button>
+      <div class="ticket" style="display: none">
+        <div class="card text-left">
+          <div class="card-header">
+            <h2 class="ticket-title"></h2>
+          </div>
+          <div class="card-body">
+            <p class="card-text ticket-description"></p>
+            <div class="form-group text-left points-container">
+              <div class="form-row align-items-center">
+                <div class="col-2">
+                  <label for="story-points">Story Points</label>
+                  <select class="form-control story-points" id="story-points">
+                    <option>1</option>
+                    <option>2</option>
+                    <option>3</option>
+                    <option>5</option>
+                  </select>
+                </div>
+              </div>
+              <a href="#" class="btn btn-primary calculate-points">Vote!</a>
+              <div class="winner" style="display: none;">
+                <p class="final-points"></p>
+                <button disabled=true class="btn btn-primary next-card" value="">Next Card</a>
+              </div>
+              <div class="tie" style="display: none;">
+                <p class="card-text"> TIE! </p>
+                <button disabled=true class="btn btn-primary next-card" value=""></a>
+                <button disabled=true class="btn btn-primary next-card" value=""></a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 

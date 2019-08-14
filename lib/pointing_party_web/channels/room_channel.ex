@@ -3,6 +3,7 @@ defmodule PointingPartyWeb.RoomChannel do
 
   alias PointingParty.Card
   alias PointingPartyWeb.Presence
+  alias PointingParty.VoteCalculator
 
   def join("room:lobby", _payload, socket) do
     send(self(), :after_join)
@@ -29,6 +30,7 @@ defmodule PointingPartyWeb.RoomChannel do
 
   def handle_in("finalized_points", %{"points" => points}, socket) do
     updated_socket = save_vote_next_card(points, socket)
+    # clear_user_points(socket)
     broadcast!(updated_socket, "new_card", %{card: current_card(updated_socket)})
     {:reply, :ok, updated_socket}
   end
@@ -38,6 +40,15 @@ defmodule PointingPartyWeb.RoomChannel do
     broadcast!(updated_socket, "new_card", %{card: current_card(updated_socket)})
     {:reply, :ok, updated_socket}
   end
+
+  intercept ["new_card"]
+
+  def handle_out("new_card", payload, socket) do
+    Presence.update(socket, socket.assigns.username, &(Map.put(&1, :points, nil)))
+    push(socket, "new_card", payload)
+    {:noreply, socket}
+  end
+
 
   defp current_card(socket) do
     socket.assigns
@@ -56,12 +67,7 @@ defmodule PointingPartyWeb.RoomChannel do
   defp finalize_voting(socket) do
     current_users = Presence.list(socket)
 
-    {event, points} =
-      case winning_vote(current_users) do
-        top_two when is_list(top_two) -> {"tie", top_two}
-        winner -> {"winner", winner}
-      end
-
+    {event, points} = VoteCalculator.calculate_votes(current_users)
     broadcast!(socket, event, %{points: points})
   end
 
@@ -90,33 +96,5 @@ defmodule PointingPartyWeb.RoomChannel do
     |> assign(:unvoted, remaining)
     |> assign(:current, next)
     |> assign(:voted, [latest_card | socket.assigns[:voted]])
-  end
-
-  defp winning_vote(users) do
-    votes = Enum.map(users, fn {_username, %{metas: [%{points: points}]}} -> points end)
-    calculated_votes = Enum.reduce(votes, %{}, fn vote, acc ->
-      acc
-      |> Map.get_and_update(vote, &({&1, (&1 || 0) + 1}))
-      |> elem(1)
-    end)
-
-    total_votes = length(votes)
-
-    majority = Enum.reduce_while(calculated_votes, nil, fn {point, vote_count}, _acc ->
-      if vote_count == total_votes or rem(vote_count, total_votes) > 5 do
-        {:halt, point}
-      else
-        {:cont, nil}
-      end
-    end)
-
-    if is_nil(majority) do
-      calculated_votes
-      |> Enum.sort_by(&elem(&1, 1))
-      |> Enum.take(2)
-      |> Enum.map(&elem(&1, 0))
-    else
-      majority
-    end
   end
 end
