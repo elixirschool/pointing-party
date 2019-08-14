@@ -1,8 +1,13 @@
 import { Socket, Presence } from 'phoenix'
+import updateUsers  from './users'
+
 const socket = new Socket('/socket', {params: {username: window.pointingParty.username}})
 socket.connect()
 
 let driving = false;
+
+// connect to Presence here
+// set up your syncDiff function using updateUsers as a callback
 
 const startButton = document.querySelector('.start-button')
 startButton.addEventListener('click', e => {
