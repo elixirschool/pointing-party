@@ -33,9 +33,9 @@
   <div class="col-2">
     <h2>Users</h2>
     <dl class="row users">
-      <%= for user <- @users do %>
-        <dt><%= user %></dt>
-        <dd></dd>
+      <%= for {name, %{metas: [metas]}} <- @users do %>
+        <dt><%= name %></dt>
+        <dd><%= if @show_votes, do: metas.points %></dd>
       <% end %>
     </dl>
   </div>

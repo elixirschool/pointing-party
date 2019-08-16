@@ -9,18 +9,14 @@ defmodule PointingPartyWeb.CardLive do
   end
 
   def mount(%{username: username}, socket) do
-    {:ok, _} = Presence.track(self(), "users", username, %{})
-    users =
-      "users"
-      |> Presence.list()
-      |> Map.keys()
+    {:ok, _} = Presence.track(self(), "users", username, %{points: nil})
 
     assigns = [
       party_has_started: false,
       show_votes: false,
       tentative_points: 1,
       username: username,
-      users: users
+      users: Presence.list("users")
     ]
     {:ok, assign(socket, assigns)}
   end
@@ -36,15 +32,15 @@ defmodule PointingPartyWeb.CardLive do
   def handle_event("vote", _points, socket) do
     Presence.update(self(), "users", socket.assigns.username, &Map.put(&1, :points, socket.assigns.tentative_points))
 
-    if everyone_voted?(socket) do
-      {:noreply, assign(socket, show_votes: true)}
+    if everyone_voted?() do
+      {:noreply, assign(socket, show_votes: true, users: Presence.list("users"))}
     else
       {:noreply, socket}
     end
   end
 
-  defp everyone_voted?(socket) do
-    socket
+  defp everyone_voted? do
+    "users"
     |> Presence.list()
     |> Enum.map(fn {_username, %{metas: [metas]}} -> Map.get(metas, :points) end)
     |> Enum.all?(&(not is_nil(&1)))
