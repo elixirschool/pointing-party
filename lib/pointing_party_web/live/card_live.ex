@@ -17,6 +17,7 @@ defmodule PointingPartyWeb.CardLive do
 
     assigns = [
       party_has_started: false,
+      show_votes: false,
       tentative_points: 1,
       username: username,
       users: users
@@ -35,6 +36,17 @@ defmodule PointingPartyWeb.CardLive do
   def handle_event("vote", _points, socket) do
     Presence.update(self(), "users", socket.assigns.username, &Map.put(&1, :points, socket.assigns.tentative_points))
 
-    {:noreply, socket}
+    if everyone_voted?(socket) do
+      {:noreply, assign(socket, show_votes: true)}
+    else
+      {:noreply, socket}
+    end
+  end
+
+  defp everyone_voted?(socket) do
+    socket
+    |> Presence.list()
+    |> Enum.map(fn {_username, %{metas: [metas]}} -> Map.get(metas, :points) end)
+    |> Enum.all?(&(not is_nil(&1)))
   end
 end
