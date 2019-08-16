@@ -15,17 +15,25 @@ defmodule PointingPartyWeb.CardLive do
       |> Presence.list()
       |> Map.keys()
 
-    {:ok, assign(socket, party_has_started: false, username: username, users: users)}
+    assigns = [
+      party_has_started: false,
+      tentative_points: 1,
+      username: username,
+      users: users
+    ]
+    {:ok, assign(socket, assigns)}
   end
 
   def handle_event("start_party", _, socket) do
     {:noreply, assign(socket, card: List.first(cards()), party_has_started: true)}
   end
 
-  # Change HTML to use a form so we can get points?
+  def handle_event("tentative_vote", %{"points" => points}, socket) do
+    {:noreply, assign(socket, tentative_points: points)}
+  end
+
   def handle_event("vote", _points, socket) do
-    Presence.update(self(), "users", socket.assigns.username, &Map.put(&1, :points, 3))
-    IO.inspect Presence.list("users")
+    Presence.update(self(), "users", socket.assigns.username, &Map.put(&1, :points, socket.assigns.tentative_points))
 
     {:noreply, socket}
   end
