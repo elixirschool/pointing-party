@@ -12,7 +12,7 @@ const updateUsers = presence => {
   }
 }
 
-const userData = (userId, { metas: [{ points }, ..._rest]}) => ({ userId, points })
+const userData = (userId, {metas: [{points}, ..._rest]}) => ({userId, points})
 
 const showPoints = usersElem => ({userId, points}) => {
   const userElem = document.querySelector(`.${userId}.user-estimate`)
@@ -32,7 +32,7 @@ const addUser = usersElem => ({userId, points}) => {
 }
 
 const allHaveEstimated = users => {
-  const pointsCollection = map(({ points }) => points)(users)
+  const pointsCollection = map(({points}) => points)(users)
 
   return none(isNil)(pointsCollection)
 }

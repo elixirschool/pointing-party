@@ -18,23 +18,24 @@ if (window.pointingParty.username) {
 }
 
 const startButton = document.querySelector('.start-button')
-startButton.addEventListener('click', e => {
+startButton.addEventListener('click', event => {
   driving = true;
   channel.push('start_pointing', {})
 })
 
-const nextCardButtons = document.getElementsByClassName('next-card')
-for (let i = 0;i < nextCardButtons.length; i++) {
-  nextCardButtons[i].addEventListener('click', e => {
-    channel.push('finalized_points', {points: e.target.value})
+document
+  .querySelectorAll('.next-card')
+  .forEach(card => {
+    card.addEventListener('click', event => {
+      channel.push('finalized_points', {points: event.target.value})
+    })
   })
-}
 
 document
   .querySelector('.calculate-points')
   .addEventListener('click', event => {
     const storyPoints = document.querySelector('.story-points')
-    channel.push('user_estimated', { points: storyPoints.value })
+    channel.push('user_estimated', {points: storyPoints.value})
   })
 
 channel.on('new_card', state => {
@@ -61,7 +62,7 @@ channel.on('new_card', state => {
     .innerHTML = state.card.description
 })
 
-const renderVotingResults = function(template) {
+const renderVotingResults = template => {
   const pointContainer = document.querySelector('.points-container')
   renderTemplate(pointContainer, template)
 

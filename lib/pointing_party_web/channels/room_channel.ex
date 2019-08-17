@@ -30,14 +30,15 @@ defmodule PointingPartyWeb.RoomChannel do
 
   def handle_in("finalized_points", %{"points" => points}, socket) do
     updated_socket = save_vote_next_card(points, socket)
-    # clear_user_points(socket)
     broadcast!(updated_socket, "new_card", %{card: current_card(updated_socket)})
+
     {:reply, :ok, updated_socket}
   end
 
   def handle_in("start_pointing", _params, socket) do
     updated_socket = initialize_state(socket)
     broadcast!(updated_socket, "new_card", %{card: current_card(updated_socket)})
+
     {:reply, :ok, updated_socket}
   end
 
@@ -46,6 +47,7 @@ defmodule PointingPartyWeb.RoomChannel do
   def handle_out("new_card", payload, socket) do
     Presence.update(socket, socket.assigns.username, &(Map.put(&1, :points, nil)))
     push(socket, "new_card", payload)
+
     {:noreply, socket}
   end
 
@@ -60,18 +62,19 @@ defmodule PointingPartyWeb.RoomChannel do
   defp everyone_voted?(socket) do
     socket
     |> Presence.list()
-    |> Enum.map(fn {_username, %{metas: [metas]}} -> Map.get(metas, :points) end)
+    |> Enum.map(fn {_username, %{metas: [%{points: points}]}} -> points end)
     |> Enum.all?(&(not is_nil(&1)))
   end
 
   defp finalize_voting(socket) do
     current_users = Presence.list(socket)
-
     {event, points} = VoteCalculator.calculate_votes(current_users)
+
     broadcast!(socket, event, %{points: points})
   end
 
   defp initialize_state(%{assigns: %{cards: _cards}} = socket), do: socket
+
   defp initialize_state(socket) do
     [first | cards] = Card.cards()
 

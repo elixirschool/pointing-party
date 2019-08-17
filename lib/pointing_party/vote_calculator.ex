@@ -19,11 +19,7 @@ defmodule PointingParty.VoteCalculator do
   end
 
   defp get_points(score_card, users) do
-    votes =
-      users
-      |> Enum.map(fn {_username, %{metas: [%{points: points}]}} ->
-        points
-      end)
+    votes = Enum.map(users, fn {_username, %{metas: [%{points: points}]}} -> points end)
 
     update_score_card(score_card, :votes, votes)
   end
