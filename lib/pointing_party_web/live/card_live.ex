@@ -28,7 +28,7 @@ defmodule PointingPartyWeb.CardLive do
 
   def handle_event("next_card", points, socket) do
     updated_socket = save_vote_next_card(points, socket)
-    Presence.update(self(), "users", socket.assigns.username, &Map.put(&1, :points, nil))
+    Presence.update(self(), "users", updated_socket.assigns.username, &Map.put(&1, :points, nil))
     Endpoint.broadcast_from(self(), "users", "update_card", %{card: updated_socket.assigns.current_card})
 
     {:noreply, updated_socket}
