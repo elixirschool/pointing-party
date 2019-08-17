@@ -25,7 +25,7 @@
             </div>
 
             <%= if @outcome == "winner" do %>
-              <p><%= @results %> Points</p>
+              <p>Winner: <%= @results %> Points</p>
               <button
                 <%= if !@is_driving do %>disabled<% end %>
                 class="btn btn-primary"
@@ -37,7 +37,7 @@
             <% end %>
 
             <%= if @outcome == "tie" do %>
-              <p class="card-text">TIE!</p>
+              <p>TIE!</p>
 
               <button
                 <%= if !@is_driving do %>disabled<% end %>
