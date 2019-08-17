@@ -27,6 +27,10 @@
           </form>
         </div>
       </div>
+
+      <%= if @show_votes do %>
+        <button <%= if !@is_driving do %>disabled<% end %> class="btn btn-primary">Next Card</button>
+      <% end %>
     <% end %>
   </div>
 
