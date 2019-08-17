@@ -2,7 +2,7 @@
   <div class="card-container col-10">
     <%= if !@party_has_started do %>
       <div class="col-md-4 text-center">
-        <button phx-click="start_party" class="btn-primary">Start the Party!</button>
+        <button phx-click="start_party" class="btn btn-primary">Start the Party!</button>
       </div>
     <% else %>
       <div class="card text-left">
@@ -16,21 +16,20 @@
               <div class="col-2">
                 <label for="story-points">Story Points</label>
                 <select name="points" class="form-control story-points" id="story-points">
-                  <option value="1">1</option>
-                  <option value="2">2</option>
-                  <option value="3">3</option>
-                  <option value="5">5</option>
+                  <%= for point <- @points_range do %>
+                    <option value="<%= point %>"><%= point %></option>
+                  <% end %>
                 </select>
               </div>
             </div>
 
             <%= if @outcome == "winner" do %>
-              <p>Winner: <%= @results %> Points</p>
+              <p>Winner: <%= @point_tally %> Points</p>
               <button
                 <%= if !@is_driving do %>disabled<% end %>
                 class="btn btn-primary"
                 phx-click="next_card"
-                phx-value="<%= @results %>"
+                phx-value="<%= @point_tally %>"
               >
                 Next Card
               </button>
@@ -43,18 +42,18 @@
                 <%= if !@is_driving do %>disabled<% end %>
                 class="btn btn-primary"
                 phx-click="next_card"
-                phx-value="<%= List.first(@results) %>"
+                phx-value="<%= List.first(@point_tally) %>"
               >
-                Pick <%= List.first(@results) %>
+                Pick <%= List.first(@point_tally) %>
               </button>
 
               <button
                 <%= if !@is_driving do %>disabled<% end %>
                 class="btn btn-primary"
                 phx-click="next_card"
-                phx-value="<%= List.last(@results) %>"
+                phx-value="<%= List.last(@point_tally) %>"
               >
-                Pick <%= List.last(@results) %>
+                Pick <%= List.last(@point_tally) %>
               </button>
             <% end %>
 

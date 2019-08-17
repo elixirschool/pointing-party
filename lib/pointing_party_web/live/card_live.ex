@@ -11,13 +11,15 @@ defmodule PointingPartyWeb.CardLive do
   def mount(%{username: username}, socket) do
     Endpoint.subscribe("users")
     {:ok, _} = Presence.track(self(), "users", username, %{points: nil})
+
     assigns = [
       current_card: nil,
       is_driving: false,
       outcome: nil,
       party_has_started: false,
+      points_range: Card.points_range(),
       remaining_cards: [],
-      results: nil,
+      point_tally: nil,
       username: username,
       users: Presence.list("users"),
       votes: []
@@ -67,31 +69,29 @@ defmodule PointingPartyWeb.CardLive do
     {:noreply, assign(socket, users: Presence.list("users"))}
   end
 
-  def handle_info(%{event: "tie", payload: %{results: results}, topic: "users"}, socket) do
-    {:noreply, assign(socket, outcome: "tie", results: results)}
-  end
-
   def handle_info(%{event: "update_card", payload: %{card: card}, topic: "users"}, socket) do
     Presence.update(self(), "users", socket.assigns.username, &Map.put(&1, :points, nil))
     {:noreply, assign(socket, current_card: card, outcome: nil)}
   end
 
-  def handle_info(%{event: "winner", payload: %{results: results}, topic: "users"}, socket) do
-    {:noreply, assign(socket, outcome: "winner", results: results)}
+  def handle_info(%{event: "votes_tallied", payload: payload, topic: "users"}, socket) do
+    %{outcome: outcome, point_tally: point_tally} = payload
+
+    {:noreply, assign(socket, outcome: outcome, point_tally: point_tally)}
   end
 
   defp everyone_voted? do
     "users"
     |> Presence.list()
-    |> Enum.map(fn {_username, %{metas: [metas]}} -> Map.get(metas, :points) end)
-    |> Enum.all?(&(not is_nil(&1)))
+    |> Enum.map(fn {_username, %{metas: [%{points: points}]}} -> points end)
+    |> Enum.all?(&(&1))
   end
 
   defp finalize_voting do
     current_users = Presence.list("users")
-    {event, results} = VoteCalculator.calculate_votes(current_users)
+    {outcome, point_tally} = VoteCalculator.calculate_votes(current_users)
 
-    Endpoint.broadcast("users", event, %{results: results})
+    Endpoint.broadcast("users", "votes_tallied", %{outcome: outcome, point_tally: point_tally})
   end
 
   defp save_vote_next_card(points, socket) do

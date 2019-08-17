@@ -1,13 +1,18 @@
 defmodule PointingPartyWeb.Plugs.Auth do
-  import Plug.Conn
   import Phoenix.Controller
+  import Plug.Conn
 
   def init(default), do: default
 
   def call(conn, _default) do
     case authenticate(conn) do
-      nil -> conn |> redirect(to: "/login") |> halt()
-      username -> assign(conn, :username, username)
+      nil ->
+        conn
+        |> redirect(to: "/login")
+        |> halt()
+
+      username ->
+        assign(conn, :username, username)
     end
   end
 

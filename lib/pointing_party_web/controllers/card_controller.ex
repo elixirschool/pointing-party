@@ -3,9 +3,7 @@ defmodule PointingPartyWeb.CardController do
 
   import Phoenix.LiveView.Controller
 
-  def index(conn, _params) do
-    %{assigns: %{username: username}} = conn
-
+  def index(%{assigns: %{username: username}} = conn, _params) do
     live_render(conn, PointingPartyWeb.CardLive, session: %{username: username})
   end
 end
