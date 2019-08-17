@@ -23,44 +23,47 @@
                 </select>
               </div>
             </div>
-            <button class="btn btn-primary">Vote!</button>
+
+            <%= if @outcome == "winner" do %>
+              <p><%= @results %> Points</p>
+              <button
+                <%= if !@is_driving do %>disabled<% end %>
+                class="btn btn-primary"
+                phx-click="next_card"
+                phx-value="<%= @results %>"
+              >
+                Next Card
+              </button>
+            <% end %>
+
+            <%= if @outcome == "tie" do %>
+              <p class="card-text">TIE!</p>
+
+              <button
+                <%= if !@is_driving do %>disabled<% end %>
+                class="btn btn-primary"
+                phx-click="next_card"
+                phx-value="<%= List.first(@results) %>"
+              >
+                Pick <%= List.first(@results) %>
+              </button>
+
+              <button
+                <%= if !@is_driving do %>disabled<% end %>
+                class="btn btn-primary"
+                phx-click="next_card"
+                phx-value="<%= List.last(@results) %>"
+              >
+                Pick <%= List.last(@results) %>
+              </button>
+            <% end %>
+
+            <%= if @outcome == nil do %>
+              <button class="btn btn-primary">Vote!</button>
+            <% end %>
           </form>
         </div>
       </div>
-
-      <%= if @outcome == "winner" do %>
-        <p><%= @results %> Points</p>
-        <button
-          <%= if !@is_driving do %>disabled<% end %>
-          class="btn btn-primary"
-          phx-click="next_card"
-          phx-value="<%= @results %>"
-        >
-          Next Card
-        </button>
-      <% end %>
-
-      <%= if @outcome == "tie" do %>
-        <p class="card-text">TIE!</p>
-
-        <button
-          <%= if !@is_driving do %>disabled<% end %>
-          class="btn btn-primary"
-          phx-click="next_card"
-          phx-value="<%= List.first(@results) %>"
-        >
-          Pick <%= List.first(@results) %>
-        </button>
-
-        <button
-          <%= if !@is_driving do %>disabled<% end %>
-          class="btn btn-primary"
-          phx-click="next_card"
-          phx-value="<%= List.last(@results) %>"
-        >
-          Pick <%= List.last(@results) %>
-        </button>
-      <% end %>
     <% end %>
   </div>
 
@@ -68,8 +71,8 @@
     <h2>Users</h2>
     <dl class="row users">
       <%= for {name, %{metas: [metas]}} <- @users do %>
-        <dt><%= name %></dt>
-        <dd><%= if @outcome, do: metas.points %></dd>
+        <dt class="col-8"><%= name %></dt>
+        <dd class="col-4"><%= if @outcome, do: metas.points %></dd>
       <% end %>
     </dl>
   </div>
