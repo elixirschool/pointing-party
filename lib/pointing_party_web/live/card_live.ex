@@ -26,8 +26,9 @@ defmodule PointingPartyWeb.CardLive do
     {:ok, assign(socket, assigns)}
   end
 
-  def handle_event("next_card", _, socket) do
-    updated_socket = save_vote_next_card(3, socket)
+  def handle_event("next_card", points, socket) do
+    updated_socket = save_vote_next_card(points, socket)
+    Presence.update(self(), "users", socket.assigns.username, &Map.put(&1, :points, nil))
     Endpoint.broadcast_from(self(), "users", "update_card", %{card: updated_socket.assigns.current_card})
 
     {:noreply, updated_socket}
@@ -44,6 +45,14 @@ defmodule PointingPartyWeb.CardLive do
     Presence.update(self(), "users", socket.assigns.username, &Map.put(&1, :points, points))
 
     if everyone_voted?() do
+      Endpoint.broadcast("users", "everyone_voted", %{})
+    end
+
+    {:noreply, socket}
+  end
+
+  def handle_info(%{event: "everyone_voted", topic: "users"}, socket) do
+    if socket.assigns.is_driving do
       finalize_voting()
     end
 

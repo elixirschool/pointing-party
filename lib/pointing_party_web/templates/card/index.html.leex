@@ -30,13 +30,36 @@
 
       <%= if @outcome == "winner" do %>
         <p><%= @results %> Points</p>
-        <button <%= if !@is_driving do %>disabled<% end %> class="btn btn-primary" phx-click="next_card">Next Card</button>
+        <button
+          <%= if !@is_driving do %>disabled<% end %>
+          class="btn btn-primary"
+          phx-click="next_card"
+          phx-value="<%= @results %>"
+        >
+          Next Card
+        </button>
       <% end %>
 
       <%= if @outcome == "tie" do %>
         <p class="card-text">TIE!</p>
-        <button <%= if !@is_driving do %>disabled<% end %> class="btn btn-primary" phx-click="next_card">Pick <%= List.first(@results) %></button>
-        <button <%= if !@is_driving do %>disabled<% end %> class="btn btn-primary" phx-click="next_card">Pick <%= List.last(@results) %></button>
+
+        <button
+          <%= if !@is_driving do %>disabled<% end %>
+          class="btn btn-primary"
+          phx-click="next_card"
+          phx-value="<%= List.first(@results) %>"
+        >
+          Pick <%= List.first(@results) %>
+        </button>
+
+        <button
+          <%= if !@is_driving do %>disabled<% end %>
+          class="btn btn-primary"
+          phx-click="next_card"
+          phx-value="<%= List.last(@results) %>"
+        >
+          Pick <%= List.last(@results) %>
+        </button>
       <% end %>
     <% end %>
   </div>
