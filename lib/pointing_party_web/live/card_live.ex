@@ -1,7 +1,7 @@
 defmodule PointingPartyWeb.CardLive do
   use Phoenix.LiveView
 
-  alias PointingParty.Card
+  alias PointingParty.{Card, VoteCalculator}
   alias PointingPartyWeb.{Endpoint, Presence}
 
   def render(assigns) do
@@ -89,12 +89,7 @@ defmodule PointingPartyWeb.CardLive do
 
   defp finalize_voting do
     current_users = Presence.list("users")
-
-    {event, results} =
-      case winning_vote(current_users) do
-        top_two when is_list(top_two) -> {"tie", top_two}
-        winner -> {"winner", winner}
-      end
+    {event, results} = VoteCalculator.calculate_votes(current_users)
 
     Endpoint.broadcast("users", event, %{results: results})
   end
@@ -115,34 +110,5 @@ defmodule PointingPartyWeb.CardLive do
     |> assign(:current_card, next_card)
     |> assign(:outcome, nil)
     |> assign(:votes, [latest_card | socket.assigns[:votes]])
-  end
-
-  defp winning_vote(users) do
-    votes = Enum.map(users, fn {_username, %{metas: [%{points: points}]}} -> points end)
-
-    calculated_votes = Enum.reduce(votes, %{}, fn vote, acc ->
-      acc
-      |> Map.get_and_update(vote, &({&1, (&1 || 0) + 1}))
-      |> elem(1)
-    end)
-
-    total_votes = length(votes)
-
-    majority = Enum.reduce_while(calculated_votes, nil, fn {point, vote_count}, _acc ->
-      if vote_count == total_votes or rem(vote_count, total_votes) > 5 do
-        {:halt, point}
-      else
-        {:cont, nil}
-      end
-    end)
-
-    if is_nil(majority) do
-      calculated_votes
-      |> Enum.sort_by(&elem(&1, 1))
-      |> Enum.take(2)
-      |> Enum.map(&elem(&1, 0))
-    else
-      majority
-    end
   end
 end
