@@ -11,9 +11,9 @@
         </div>
         <div class="card-body">
           <p class="card-text"><%= @card.description %></p>
-          <div class="form-group text-left points-container">
+          <form class="form-group text-left points-container" phx-submit="vote">
             <div class="form-row align-items-center">
-              <form action="" method="GET" class="col-2" phx-change="tentative_vote">
+              <div class="col-2">
                 <label for="story-points">Story Points</label>
                 <select name="points" class="form-control story-points" id="story-points">
                   <option value="1">1</option>
@@ -23,7 +23,7 @@
                 </select>
               </div>
             </div>
-            <a href="#" phx-click="vote" phx-value="<%= @tentative_points %>" class="btn btn-primary">Vote!</a>
+            <button class="btn btn-primary">Vote!</button>
           </form>
         </div>
       </div>
