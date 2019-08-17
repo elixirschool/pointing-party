@@ -2,7 +2,7 @@ defmodule PointingPartyWeb.UserSocket do
   use Phoenix.Socket
 
   ## Channels
-  channel "room:lobby", PointingPartyWeb.RoomChannel
+  # channel "room:lobby", PointingPartyWeb.RoomChannel
 
   # Socket params are passed from the client and can
   # be used to verify and authenticate a user. After
