@@ -2,15 +2,16 @@ defmodule PointingPartyWeb.CardLive do
   use Phoenix.LiveView
 
   import PointingParty.Card, only: [cards: 0]
-  alias PointingPartyWeb.Presence
+
+  alias PointingPartyWeb.{Endpoint, Presence}
 
   def render(assigns) do
     Phoenix.View.render(PointingPartyWeb.CardView, "index.html", assigns)
   end
 
   def mount(%{username: username}, socket) do
+    Endpoint.subscribe("users") # Does this need to be different than the Presence channel?
     {:ok, _} = Presence.track(self(), "users", username, %{points: nil})
-
     assigns = [
       party_has_started: false,
       show_votes: false,
@@ -18,10 +19,13 @@ defmodule PointingPartyWeb.CardLive do
       username: username,
       users: Presence.list("users")
     ]
+
     {:ok, assign(socket, assigns)}
   end
 
   def handle_event("start_party", _, socket) do
+    Endpoint.broadcast_from(self(), "users", "party_started", %{})
+
     {:noreply, assign(socket, card: List.first(cards()), party_has_started: true)}
   end
 
@@ -37,6 +41,19 @@ defmodule PointingPartyWeb.CardLive do
     else
       {:noreply, socket}
     end
+  end
+
+  def handle_info(%{event: "presence_diff"}, msg) do
+    IO.puts "presence diff"
+    IO.inspect msg
+
+    {:noreply, msg}
+  end
+
+  def handle_info(%{event: "party_started", topic: "users"}, socket) do
+    IO.puts "party started!"
+
+    {:noreply, assign(socket, card: List.first(cards()), party_has_started: true)}
   end
 
   defp everyone_voted? do
