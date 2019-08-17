@@ -9,17 +9,18 @@ defmodule PointingPartyWeb.CardLive do
   end
 
   def mount(%{username: username}, socket) do
-    Endpoint.subscribe("users") # Does this need to be different than the Presence channel?
+    Endpoint.subscribe("users")
     {:ok, _} = Presence.track(self(), "users", username, %{points: nil})
     assigns = [
-      card: nil,
+      current_card: nil,
       is_driving: false,
       outcome: nil,
       party_has_started: false,
       remaining_cards: [],
       results: nil,
       username: username,
-      users: Presence.list("users")
+      users: Presence.list("users"),
+      votes: []
     ]
 
     {:ok, assign(socket, assigns)}
@@ -27,7 +28,7 @@ defmodule PointingPartyWeb.CardLive do
 
   def handle_event("next_card", _, socket) do
     updated_socket = save_vote_next_card(3, socket)
-    Endpoint.broadcast_from(self(), "users", "update_card", %{card: updated_socket.assigns.card})
+    Endpoint.broadcast_from(self(), "users", "update_card", %{card: updated_socket.assigns.current_card})
 
     {:noreply, updated_socket}
   end
@@ -49,12 +50,12 @@ defmodule PointingPartyWeb.CardLive do
     {:noreply, socket}
   end
 
-  def handle_info(%{event: "presence_diff"}, socket) do
-    {:noreply, assign(socket, users: Presence.list("users"))}
+  def handle_info(%{event: "party_started", payload: %{card: card}, topic: "users"}, socket) do
+    {:noreply, assign(socket, current_card: card, party_has_started: true)}
   end
 
-  def handle_info(%{event: "party_started", payload: %{card: card}, topic: "users"}, socket) do
-    {:noreply, assign(socket, card: card, party_has_started: true)}
+  def handle_info(%{event: "presence_diff"}, socket) do
+    {:noreply, assign(socket, users: Presence.list("users"))}
   end
 
   def handle_info(%{event: "tie", payload: %{results: results}, topic: "users"}, socket) do
@@ -62,8 +63,8 @@ defmodule PointingPartyWeb.CardLive do
   end
 
   def handle_info(%{event: "update_card", payload: %{card: card}, topic: "users"}, socket) do
-    IO.puts "updating card"
-    {:noreply, assign(socket, card: card, outcome: nil)}
+    Presence.update(self(), "users", socket.assigns.username, &Map.put(&1, :points, nil))
+    {:noreply, assign(socket, current_card: card, outcome: nil)}
   end
 
   def handle_info(%{event: "winner", payload: %{results: results}, topic: "users"}, socket) do
@@ -89,11 +90,11 @@ defmodule PointingPartyWeb.CardLive do
     Endpoint.broadcast("users", event, %{results: results})
   end
 
-  defp save_vote_next_card(_points, socket) do
-    # latest_vote =
-    #   socket.assigns
-    #   |> Map.get(:current_card)
-    #   |> Map.put(:points, points)
+  defp save_vote_next_card(points, socket) do
+    latest_card =
+      socket.assigns
+      |> Map.get(:current_card)
+      |> Map.put(:points, points)
 
     {next_card, remaining_cards} =
       socket.assigns
@@ -102,9 +103,9 @@ defmodule PointingPartyWeb.CardLive do
 
     socket
     |> assign(:remaining_cards, remaining_cards)
-    |> assign(:card, next_card)
+    |> assign(:current_card, next_card)
     |> assign(:outcome, nil)
-    # |> assign(:votes, [latest_vote | socket.assigns[:vote]])
+    |> assign(:votes, [latest_card | socket.assigns[:votes]])
   end
 
   defp winning_vote(users) do
