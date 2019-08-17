@@ -25,8 +25,8 @@ startButton.addEventListener('click', event => {
 
 document
   .querySelectorAll('.next-card')
-  .forEach(card => {
-    card.addEventListener('click', event => {
+  .forEach(elem => {
+    elem.addEventListener('click', event => {
       channel.push('finalized_points', {points: event.target.value})
     })
   })
