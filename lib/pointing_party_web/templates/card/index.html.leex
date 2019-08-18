@@ -1,0 +1,63 @@
+<div class="row">
+  <div class="card-container col-10">
+    <%= if !@pointing do %>
+      <div class="col-md-4 text-center">
+        <button class="btn-primary">Start the Party!</button>
+      </div>
+    <% else %>
+      <div class="card text-left">
+        <div class="card-header">
+          <h2><%= @current_card.title %></h2>
+        </div>
+        <div class="card-body">
+          <p class="card-text"><%= @current_card.description %></p>
+          <form class="form-group text-left points-container">
+            <div class="form-row align-items-center">
+              <div class="col-2">
+                <label for="story-points">Story Points</label>
+                <select name="points" class="form-control story-points" id="story-points">
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="5">5</option>
+                </select>
+              </div>
+            </div>
+
+            <%= if @outcome == "winner" do %>
+              <p>Winner: <%= @results %> Points</p>
+              <button class="btn btn-primary">
+                Next Card
+              </button>
+            <% end %>
+
+            <%= if @outcome == "tie" do %>
+              <p>TIE!</p>
+
+              <button class="btn btn-primary">
+                Pick <%= List.first(@results) %>
+              </button>
+
+              <button class="btn btn-primary">
+                Pick <%= List.last(@results) %>
+              </button>
+            <% end %>
+
+            <%= if @outcome == nil do %>
+              <button class="btn btn-primary">Vote!</button>
+            <% end %>
+          </form>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="col-2">
+    <h2>Users</h2>
+    <dl class="row users">
+      <%= for {name, %{metas: [metas]}} <- @users do %>
+        <dt class="col-8"><%= name %></dt>
+      <% end %>
+    </dl>
+  </div>
+</div>
