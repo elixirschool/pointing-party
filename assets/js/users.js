@@ -19,7 +19,7 @@ const listBy = (username, {metas: [{points}, ..._rest]}) => {
   // {username: username, points: points}
 }
 
-const showPoints = usersElem => ({userId, points}) => {
+const showPoints = ({userId, points}) => {
   const userElem = document.querySelector(`.${userId}.user-estimate`)
   userElem.innerHTML = points
 }
