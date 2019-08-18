@@ -15,6 +15,22 @@ defmodule PointingPartyWeb.RoomChannel do
     {:noreply, socket}
   end
 
+  def handle_in("user_estimated", %{"points" => points}, socket) do
+    Presence.update(socket, socket.assigns.username, &(Map.put(&1, :points, points)))
+
+    if everyone_voted?(socket) do
+      calculate_story_points(socket)
+    end
+
+    {:noreply, socket}
+  end
+
+  def handle_in("next_card", %{"points" => points}, socket) do
+    updated_socket = save_vote_next_card(points, socket)
+    broadcast!(updated_socket, "new_card", %{card: current_card(updated_socket)})
+    {:reply, :ok, updated_socket}
+  end
+
   def handle_in("start_pointing", _params, socket) do
     updated_socket = initialize_state(socket)
     # broadcast the "new_card" message with a payload of %{card: current_card}
@@ -22,19 +38,26 @@ defmodule PointingPartyWeb.RoomChannel do
     {:reply, :ok, updated_socket}
   end
 
-  def handle_in("user_estimated", %{"points" => points}, socket) do
-    # update votes for user presence
-    # if everyone voted, calculate story point estimate with the help of the VoteCalculator
-    # broadcast the 'winner'/'tie' event with a payload of %{points: points}
-
-    {:noreply, socket}
+  
+  defp current_card(socket) do
+    socket.assigns
+    |> Map.get(:current)
+    |> Map.from_struct()
+    |> Map.drop([:__meta__])
   end
 
-  def handle_in("next_card", %{"points" => points}, socket) do
-    save_vote_next_card(points, socket)
-    # broadcast the "new_card" message with a payload of %{card: new_current_card}
+  defp everyone_voted?(socket) do
+    socket
+    |> Presence.list()
+    |> Enum.map(fn {_username, %{metas: [metas]}} -> Map.get(metas, :points) end)
+    |> Enum.all?(&(not is_nil(&1)))
+  end
 
-    {:reply, :ok, socket}
+  defp calculate_story_points(socket) do
+    current_users = Presence.list(socket)
+
+    {event, points} = VoteCalculator.calculate_votes(current_users)
+    broadcast!(socket, event, %{points: points})
   end
 
   defp initialize_state(%{assigns: %{cards: _cards}} = socket), do: socket

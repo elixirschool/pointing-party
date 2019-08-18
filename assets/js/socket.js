@@ -19,7 +19,7 @@ document
   .querySelectorAll('.next-card')
   .forEach(elem => {
     elem.addEventListener('click', event => {
-    // send 'finalized_points' message to the channel here
+      channel.push('next_card', {points: e.target.value})
     })
   })
 
