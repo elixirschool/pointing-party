@@ -1,7 +1,7 @@
 defmodule PointingPartyWeb.SessionController do
   use PointingPartyWeb, :controller
-  alias PointingParty.Account.Auth
-  alias PointingParty.Account
+
+  alias PointingParty.{Account, Account.Auth}
 
   def new(conn, _params) do
     changeset = Account.changeset(%Account{})
@@ -15,13 +15,16 @@ defmodule PointingPartyWeb.SessionController do
         |> put_session(:username, username)
         |> redirect(to: "/cards")
         |> halt()
+
       {:error, changeset} ->
         render(conn, "new.html", changeset: changeset)
     end
   end
 
   def delete(conn, _params) do
-    clear_session(conn)
-    |> redirect(to: "/login") |> halt()
+    conn
+    |> clear_session()
+    |> redirect(to: "/login")
+    |> halt()
   end
 end

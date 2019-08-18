@@ -34,5 +34,5 @@ config :pointing_party,
       description: """
       Update our existing authentication flow to use the newly created Auth module.
       """
-    },
+    }
   ]

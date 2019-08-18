@@ -13,9 +13,6 @@ defmodule PointingParty.Card do
     timestamps()
   end
 
-  def points_range, do: @pointing_scale
-
-  @doc false
   def changeset(card, attrs) do
     card
     |> cast(attrs, [:title, :description, :points])
@@ -28,4 +25,6 @@ defmodule PointingParty.Card do
     |> Application.get_env(:cards)
     |> Enum.map(&struct(__MODULE__, &1))
   end
+
+  def points_range, do: @pointing_scale
 end

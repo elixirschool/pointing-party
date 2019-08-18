@@ -14,8 +14,8 @@
                 <div class="col-2">
                   <label for="story-points">Story Points</label>
                   <select class="form-control story-points" id="story-points">
+                    <option>0</option>
                     <option>1</option>
-                    <option>2</option>
                     <option>3</option>
                     <option>5</option>
                   </select>
@@ -24,12 +24,12 @@
               <a href="#" class="btn btn-primary calculate-points">Vote!</a>
               <div class="winner" style="display: none;">
                 <p class="final-points"></p>
-                <button disabled=true class="btn btn-primary next-card" value="">Next Card</a>
+                <button disabled=true class="btn btn-primary next-card" value="">Next Card</button>
               </div>
               <div class="tie" style="display: none;">
-                <p class="card-text"> TIE! </p>
-                <button disabled=true class="btn btn-primary next-card" value=""></a>
-                <button disabled=true class="btn btn-primary next-card" value=""></a>
+                <p class="card-text">TIE!</p>
+                <button disabled=true class="btn btn-primary next-card" value=""></button>
+                <button disabled=true class="btn btn-primary next-card" value=""></button>
               </div>
             </div>
           </div>
