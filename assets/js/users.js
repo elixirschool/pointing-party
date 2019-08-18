@@ -5,17 +5,15 @@ const usersElem = document.querySelector('.users')
 const updateUsers = presence => {
   usersElem.innerHTML = ''
 
-  // let user = list presences with the help of a listBy function
-  for(let i = 0; i < users.length; i++) {
-    addUser(users[i])
-  }
+  // let users = list presences with the help of a listBy function
+  users.forEach(user => addUser(user))
 
   // implement a feature that
   // 1. checks if all fo the users in the present list have voted, i.e. have points values that are not nil
   // 2. displays the user's vote next to their name if so
 }
 
-const listBy = (username, { metas: [{ points }, ..._rest]}) => {
+const listBy = (username, {metas: [{points}, ..._rest]}) => {
   // build out the listBy function so that it returns a list of users
   // where each user looks like this:
   // {username: username, points: points}
@@ -26,7 +24,7 @@ const showPoints = usersElem => ({userId, points}) => {
   userElem.innerHTML = points
 }
 
-function addUser(user) {
+const addUser = user => {
   const userElem = document.createElement('dt')
   userElem.appendChild(document.createTextNode(user.username))
   userElem.setAttribute('class', 'col-8')

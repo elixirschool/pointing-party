@@ -10,17 +10,18 @@ let driving = false;
 // set up your syncDiff function using updateUsers as a callback
 
 const startButton = document.querySelector('.start-button')
-startButton.addEventListener('click', e => {
+startButton.addEventListener('click', event => {
   driving = true;
   // send 'start_pointing' message to the channel here
 })
 
-const nextCardButtons = document.getElementsByClassName('next-card')
-for (let i = 0;i < nextCardButtons.length; i++) {
-  nextCardButtons[i].addEventListener('click', e => {
+document
+  .querySelectorAll('.next-card')
+  .forEach(elem => {
+    elem.addEventListener('click', event => {
     // send 'finalized_points' message to the channel here
+    })
   })
-}
 
 document
   .querySelector('.calculate-points')
@@ -34,7 +35,7 @@ document
 // 'winner'
 // 'tie'
 
-function showCard(state) {
+const showCard = state => {
   document
     .querySelector('.start-button')
     .style.display = "none"
@@ -58,7 +59,7 @@ function showCard(state) {
     .innerHTML = state.card.description
 }
 
-function showWinner(state) {
+const showWinner = state => {
   document
     .querySelector('.winner')
     .style.display = "block"
@@ -76,7 +77,7 @@ function showWinner(state) {
     .disabled = !driving
 }
 
-function showTie(state) {
+const showTie = state => {
   document
     .querySelector('.tie')
     .style.display = "block"
