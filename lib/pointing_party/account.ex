@@ -11,6 +11,7 @@ defmodule PointingParty.Account do
 
   def create(attrs) do
     changeset = changeset(%Account{}, attrs)
+
     if changeset.valid? do
       account = apply_changes(changeset)
       {:ok, account}
@@ -19,7 +20,6 @@ defmodule PointingParty.Account do
     end
   end
 
-  @doc false
   def changeset(account, attrs \\ %{}) do
     account
     |> cast(attrs, [:username])
