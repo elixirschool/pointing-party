@@ -4,22 +4,29 @@ import updateUsers  from './users'
 const socket = new Socket('/socket', {params: {username: window.pointingParty.username}})
 socket.connect()
 
+const channel = socket.channel('room:lobby', {})
+const presence = new Presence(channel)
+
+presence.onSync(() => updateUsers(presence))
 let driving = false;
 
-// connect to Presence here
-// set up your syncDiff function using updateUsers as a callback
+if (window.pointingParty.username) {
+  channel.join()
+    .receive('ok', resp => { console.log('Joined successfully', resp) })
+    .receive('error', resp => { console.log('Unable to join', resp) })
+}
 
 const startButton = document.querySelector('.start-button')
 startButton.addEventListener('click', event => {
   driving = true;
-  // send 'start_pointing' message to the channel here
+  channel.push('start_pointing', {})
 })
 
 document
   .querySelectorAll('.next-card')
   .forEach(elem => {
     elem.addEventListener('click', event => {
-      channel.push('next_card', {points: e.target.value})
+      channel.push('next_card', {points: event.target.value})
     })
   })
 
@@ -27,13 +34,20 @@ document
   .querySelector('.calculate-points')
   .addEventListener('click', event => {
     const storyPoints = document.querySelector('.story-points')
-    // send 'user_estimated' to the channel here
+    channel.push('user_estimated', { points: storyPoints.value })
   })
 
-// call the relevant function defined below when you receive the following events from the channel:
-// 'next_card'
-// 'winner'
-// 'tie'
+channel.on('new_card', state => {
+  showCard(state)
+})
+
+channel.on('winner', state => {
+  showWinner(state)
+})
+
+channel.on('tie', state => {
+  showTie(state)
+})
 
 const showCard = state => {
   document

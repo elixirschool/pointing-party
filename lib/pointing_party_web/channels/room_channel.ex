@@ -1,7 +1,8 @@
 defmodule PointingPartyWeb.RoomChannel do
   use PointingPartyWeb, :channel
 
-  alias PointingParty.Card
+  alias PointingParty.{Card, VoteCalculator}
+  alias PointingPartyWeb.Presence
 
   def join("room:lobby", _payload, socket) do
     send(self(), :after_join)
@@ -10,8 +11,8 @@ defmodule PointingPartyWeb.RoomChannel do
   end
 
   def handle_info(:after_join, socket) do
-    # handle Presence listing and tracking here
-
+    push(socket, "presence_state", Presence.list(socket))
+    {:ok, _} = Presence.track(socket, socket.assigns.username, %{})
     {:noreply, socket}
   end
 
@@ -33,12 +34,18 @@ defmodule PointingPartyWeb.RoomChannel do
 
   def handle_in("start_pointing", _params, socket) do
     updated_socket = initialize_state(socket)
-    # broadcast the "new_card" message with a payload of %{card: current_card}
-
+    broadcast!(updated_socket, "new_card", %{card: current_card(updated_socket)})
     {:reply, :ok, updated_socket}
   end
 
-  
+  intercept ["new_card"]
+
+  def handle_out("new_card", payload, socket) do
+    Presence.update(socket, socket.assigns.username, &(Map.put(&1, :points, nil)))
+    push(socket, "new_card", payload)
+    {:noreply, socket}
+  end
+
   defp current_card(socket) do
     socket.assigns
     |> Map.get(:current)
