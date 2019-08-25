@@ -53,9 +53,10 @@ defmodule PointingParty.VoteCalculator do
 
   defp handle_tie(%{majority: nil, calculated_votes: calculated_votes}) do
     calculated_votes
-    |> Enum.sort_by(&elem(&1, 1))
-    |> Enum.take(2)
+    |> Enum.sort_by(&elem(&1, 1), &>=/2)
     |> Enum.map(&elem(&1, 0))
+    |> Enum.sort()
+    |> Enum.take(2)
   end
 
   defp handle_tie(%{majority: majority}), do: majority
