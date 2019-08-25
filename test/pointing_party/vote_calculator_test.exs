@@ -1,23 +1,33 @@
 defmodule PointingParty.VoteCalculatorTest do
   use ExUnit.Case, async: true
+  use ExUnitProperties
 
-   @users_with_winner %{
-    "sean" => %{metas: [%{points: 1}]},
-    "michael" => %{metas: [%{points: 3}]},
-    "sophie" => %{metas: [%{points: 3}]}
-   }
+  alias PointingParty.VoteCalculator
 
-  @users_with_tie %{
-   "sean" => %{metas: [%{points: 1}]},
-   "michael" => %{metas: [%{points: 2}]},
-   "sophie" => %{metas: [%{points: 3}]}
-  }
+  describe "calculate_votes/1" do
+    setup do
+      # Our user data looks like this:
+      # [
+      #   %{
+      #     "michael" => %{metas: [%{points: 5}]}
+      #     "sophie" => %{metas: [%{points: 3}]}
+      #   }
+      # ]
+      #
+      # Fix the generator below. It should return a data structure like the one above.
+      # Hint: use fixed_map/1, member_of/1, list_of/2, string/2, and nonempty/1.
+      user_generator = constant([])
 
-  test "calculate_votes/1 calculates when there is a winner" do
-    {"winner", 3} = PointingParty.VoteCalculator.calculate_votes(@users_with_winner)
-  end
+      [user_generator: user_generator]
+    end
 
-  test "calculate_votes/1 calculates when there is a tie" do
-    {"tie", [1,2]} = PointingParty.VoteCalculator.calculate_votes(@users_with_tie)
+    property "calculated vote is a list or an integer", %{user_generator: user_generator} do
+      check all users <- user_generator,
+                _ = IO.inspect(users),
+                {_event, winner} = VoteCalculator.calculate_votes(users),
+                max_runs: 20 do
+        # We'll assert something here
+      end
+    end
   end
 end
