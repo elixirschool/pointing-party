@@ -1,6 +1,6 @@
 defmodule PointingPartyWeb.Plugs.Auth do
-  import Plug.Conn
   import Phoenix.Controller
+  import Plug.Conn
 
   def init(default), do: default
 
