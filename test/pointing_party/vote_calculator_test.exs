@@ -2,7 +2,7 @@ defmodule PointingParty.VoteCalculatorTest do
   use ExUnit.Case, async: true
   use ExUnitProperties
 
-  alias PointingParty.Card
+  alias PointingParty.{Card, VoteCalculator}
 
   # Properties
   # --------------
@@ -33,21 +33,21 @@ defmodule PointingParty.VoteCalculatorTest do
       metas_map = fixed_map(%{
         metas: list_of(points_map, length: 1)
       })
-      users = nonempty(map_of(string(:alphanumeric), metas_map))
+      user_generator = nonempty(map_of(string(:alphanumeric), metas_map))
 
-      [users: users]
+      [user_generator: user_generator]
     end
 
-    property "calculated vote is a list or an integer", %{users: users} do
-      check all users <- users,
-                {_event, winner} = PointingParty.VoteCalculator.calculate_votes(users),
+    property "calculated vote is a list or an integer", %{user_generator: user_generator} do
+      check all users <- user_generator,
+                {_event, winner} = VoteCalculator.calculate_votes(users),
                 max_runs: 20 do
         assert is_list(winner) || is_integer(winner)
       end
     end
 
-    property "the winning value is not more than the highest vote", %{users: users} do
-      check all users <- users,
+    property "the winning value is not more than the highest vote", %{user_generator: user_generator} do
+      check all users <- user_generator,
                 max_runs: 20 do
         max_vote =
           users
@@ -61,8 +61,8 @@ defmodule PointingParty.VoteCalculatorTest do
       end
     end
 
-    property "when there is a winner, calculated vote is a valid integer", %{users: users} do
-      check all users <- users,
+    property "when there is a winner, calculated vote is a valid integer", %{user_generator: user_generator} do
+      check all users <- user_generator,
                 {event, winner} = PointingParty.VoteCalculator.calculate_votes(users),
                 max_runs: 20 do
         if event == "winner" do
@@ -71,8 +71,8 @@ defmodule PointingParty.VoteCalculatorTest do
       end
     end
 
-    property "when there is a tie, calculated vote is a list with two sorted values", %{users: users} do
-      check all users <- users,
+    property "when there is a tie, calculated vote is a list with two sorted values", %{user_generator: user_generator} do
+      check all users <- user_generator,
                 {event, votes} = PointingParty.VoteCalculator.calculate_votes(users),
                 max_runs: 20 do
         if event == "tie" do
@@ -83,8 +83,8 @@ defmodule PointingParty.VoteCalculatorTest do
       end
     end
 
-    property "when there is a tie, calculated vote is a list whose elements are valid integers", %{users: users} do
-      check all users <- users,
+    property "when there is a tie, calculated vote is a list of valid integers", %{user_generator: user_generator} do
+      check all users <- user_generator,
                 {event, votes} = PointingParty.VoteCalculator.calculate_votes(users),
                 max_runs: 20 do
         if event == "tie" do
