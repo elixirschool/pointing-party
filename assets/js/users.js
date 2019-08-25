@@ -1,4 +1,4 @@
-import { forEach, isNil, map, none } from 'ramda'
+import {every} from 'lodash'
 
 const usersElem = document.querySelector('.users')
 
@@ -6,10 +6,10 @@ const updateUsers = presence => {
   usersElem.innerHTML = ''
 
   // let users = list presences with the help of a listBy function
-  users.forEach(user => addUser(user))
+  users.forEach(addUser)
 
   // implement a feature that
-  // 1. checks if all fo the users in the present list have voted, i.e. have points values that are not nil
+  // 1. checks if all fo the users in the present list have voted, i.e. have points values that are not null
   // 2. displays the user's vote next to their name if so
 }
 
