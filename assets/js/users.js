@@ -12,7 +12,7 @@ const updateUsers = presence => {
   }
 }
 
-const userData = (userId, { metas: [{ points }, ..._rest]}) => ({ userId, points })
+const userData = (userId, {metas: [{points}, ..._rest]}) => ({userId, points})
 
 const showPoints = usersElem => ({userId, points}) => {
   const userElem = document.querySelector(`.${userId}.user-estimate`)
