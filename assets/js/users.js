@@ -11,7 +11,7 @@ const updateUsers = presence => {
   }
 }
 
-function listBy(username, metas) {
+const listBy = (username, metas) => {
   return {userId: username, points: metas.points}
 }
 
