@@ -34,7 +34,7 @@ document
   .querySelector('.calculate-points')
   .addEventListener('click', event => {
     const storyPoints = document.querySelector('.story-points')
-    channel.push('user_estimated', { points: storyPoints.value })
+    channel.push('user_estimated', {points: storyPoints.value})
   })
 
 channel.on('new_card', state => {

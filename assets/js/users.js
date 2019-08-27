@@ -1,14 +1,15 @@
-import { forEach, isNil, map, none } from 'ramda'
+import {every} from 'lodash'
 
 const updateUsers = presence => {
   const usersElem = document.querySelector('.users')
   usersElem.innerHTML = ''
   const users = presence.list(listBy)
 
-  forEach(addUser(usersElem))(users)
+  const users = presence.list(userData)
+  users.forEach(addUser(usersElem))
 
   if (allHaveEstimated(users)) {
-    forEach(showPoints(usersElem))(users)
+    users.forEach(showPoints(usersElem))
   }
 }
 
@@ -36,9 +37,9 @@ const addUser = usersElem => ({userId, points}) => {
 }
 
 const allHaveEstimated = users => {
-  const pointsCollection = map(({ points }) => points)(users)
+  const pointsCollection = users.map(({points}) => points)
 
-  return none(isNil)(pointsCollection)
+  return every(pointsCollection)
 }
 
 export default updateUsers
