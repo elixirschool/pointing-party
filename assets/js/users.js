@@ -3,8 +3,8 @@ import { forEach, isNil, map, none } from 'ramda'
 const updateUsers = presence => {
   const usersElem = document.querySelector('.users')
   usersElem.innerHTML = ''
+  const users = presence.list(listBy)
 
-  const users = presence.list(userData)
   forEach(addUser(usersElem))(users)
 
   if (allHaveEstimated(users)) {
@@ -12,7 +12,11 @@ const updateUsers = presence => {
   }
 }
 
-const userData = (userId, { metas: [{ points }, ..._rest]}) => ({ userId, points })
+function listBy(username, metas) {
+  return {userId: username, points: metas.points}
+}
+
+// const listBy = (userId,  , ..._rest]}) => ({ userId, points })
 
 const showPoints = usersElem => ({userId, points}) => {
   const userElem = document.querySelector(`.${userId}.user-estimate`)
