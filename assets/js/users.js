@@ -4,8 +4,6 @@ const updateUsers = presence => {
   const usersElem = document.querySelector('.users')
   usersElem.innerHTML = ''
   const users = presence.list(listBy)
-
-  const users = presence.list(userData)
   users.forEach(addUser(usersElem))
 
   if (allHaveEstimated(users)) {
