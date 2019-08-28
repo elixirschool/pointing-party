@@ -3,14 +3,16 @@ defmodule PointingPartyWeb.CardLive do
 
   alias PointingParty.{Card, VoteCalculator}
   alias PointingPartyWeb.Endpoint
+  alias PointingPartyWeb.Presence
   @topic "pointing_party"
 
   def render(assigns) do
     Phoenix.View.render(PointingPartyWeb.CardView, "index.html", assigns)
   end
 
-  def mount(%{username: _username}, socket) do
+  def mount(%{username: username}, socket) do
     Endpoint.subscribe(@topic)
+    Presence.track(self(), @topic, username, %{points: nil})
     {:ok, assign(socket, initial_state())}
   end
 
@@ -32,6 +34,16 @@ defmodule PointingPartyWeb.CardLive do
         remaining_cards: remaining,
         is_pointing: true)}
   end
+
+  def handle_info(
+    %{event: "presence_diff", payload: payload},
+    socket) do
+    IO.puts "IN PRESENCE DIFF"
+    users = Presence.list(@topic)
+
+    {:noreply, assign(socket, users: users)}
+  end
+
 
   ## Helper Methods ##
 
