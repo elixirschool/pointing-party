@@ -13,7 +13,7 @@ defmodule PointingPartyWeb.CardLive do
   def mount(%{username: username}, socket) do
     Endpoint.subscribe(@topic)
     Presence.track(self(), @topic, username, %{points: nil})
-    {:ok, assign(socket, initial_state())}
+    {:ok, assign(socket, initial_state(username))}
   end
 
   def handle_event("start_party", _value, socket) do
@@ -38,7 +38,6 @@ defmodule PointingPartyWeb.CardLive do
   def handle_info(
     %{event: "presence_diff", payload: payload},
     socket) do
-    IO.puts "IN PRESENCE DIFF"
     users = Presence.list(@topic)
 
     {:noreply, assign(socket, users: users)}
@@ -47,7 +46,7 @@ defmodule PointingPartyWeb.CardLive do
 
   ## Helper Methods ##
 
-  defp initial_state do
+  defp initial_state(username) do
     [
       current_card: nil,
       outcome: nil,
@@ -55,48 +54,33 @@ defmodule PointingPartyWeb.CardLive do
       remaining_cards: [],
       completed_cards: [],
       point_tally: nil,
-      users: []
+      users: [],
+      username: username
     ]
   end
 
-  defp get_next_card(cards) do
-    List.pop_at(cards, 0)
-    # returns {next_card, remaining_cards}
-  end
+  defp save_vote_next_card(points, socket) do
+    latest_card =
+      socket.assigns
+      |> Map.get(:current_card)
+      |> Map.put(:points, points)
 
-  defp everyone_voted?(users) do
-    users
-    |> Enum.map(fn {_username, %{metas: [metas]}} -> Map.get(metas, :points) end)
-    |> Enum.all?(&(not is_nil(&1)))
-  end
-
-  defp calculate_story_points(users) do
-    VoteCalculator.calculate_votes(users)
-    # returns {outcome, results}
-    # ex - {"winner", 3} or {"tie", [3, 5]}
-  end
-
-  defp update_state_with_story_point_calculation(outcome, results, socket) do
-    socket
-    |> assign(:outcome, outcome)
-    |> assign(:results, results)
-  end
-
-  defp save_card_points(points, %{assigns: %{current_card: current_card}} = socket) do
-    updated_card = Map.put(current_card, :points, points)
+    {next_card, remaining_cards} =
+      socket.assigns
+      |> Map.get(:remaining_cards)
+      |> List.pop_at(0)
 
     socket
-    |> assign(:current_card, updated_card)
-  end
-
-  defp reset_state_for_next_card(%{assigns: %{cards: cards, current_card: current_card, completed_cards: completed_cards}} = socket) do
-    {next_card, remaining_cards} = get_next_card(cards)
-
-    socket
-    |> assign(:current_card, next_card)
     |> assign(:remaining_cards, remaining_cards)
-    |> assign(:completed_cards, [current_card | socket.assigns[:completed_cards]])
+    |> assign(:current_card, next_card)
     |> assign(:outcome, nil)
-    |> assign(:results, nil)
+    |> assign(:completed_cards, [latest_card | socket.assigns[:completed_cards]])
+  end
+
+  def everyone_voted? do
+    @topic
+    |> Presence.list()
+    |> Enum.map(fn {_username, %{metas: [%{points: points}]}} -> points end)
+    |> Enum.all?(&(&1))
   end
 end
