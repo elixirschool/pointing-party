@@ -9,9 +9,9 @@ defmodule PointingPartyWeb.CardLive do
     Phoenix.View.render(PointingPartyWeb.CardView, "index.html", assigns)
   end
 
-  def mount(%{username: _username}, socket) do
+  def mount(%{username: username}, socket) do
     Endpoint.subscribe(@topic)
-    {:ok, assign(socket, initial_state())}
+    {:ok, assign(socket, initial_state(username))}
   end
 
   def handle_event("start_party", _value, socket) do
@@ -35,56 +35,41 @@ defmodule PointingPartyWeb.CardLive do
 
   ## Helper Methods ##
 
-  defp initial_state do
-    [
-      current_card: nil,
-      outcome: nil,
-      is_pointing: false,
-      remaining_cards: [],
-      completed_cards: [],
-      point_tally: nil,
-      users: []
-    ]
-  end
+  defp initial_state(username) do
+      [
+        current_card: nil,
+        outcome: nil,
+        is_pointing: false,
+        remaining_cards: [],
+        completed_cards: [],
+        point_tally: nil,
+        users: [],
+        username: username
+      ]
+    end
 
-  defp get_next_card(cards) do
-    List.pop_at(cards, 0)
-    # returns {next_card, remaining_cards}
-  end
+    defp save_vote_next_card(points, socket) do
+      latest_card =
+        socket.assigns
+        |> Map.get(:current_card)
+        |> Map.put(:points, points)
 
-  defp everyone_voted?(users) do
-    users
-    |> Enum.map(fn {_username, %{metas: [metas]}} -> Map.get(metas, :points) end)
-    |> Enum.all?(&(not is_nil(&1)))
-  end
+      {next_card, remaining_cards} =
+        socket.assigns
+        |> Map.get(:remaining_cards)
+        |> List.pop_at(0)
 
-  defp calculate_story_points(users) do
-    VoteCalculator.calculate_votes(users)
-    # returns {outcome, results}
-    # ex - {"winner", 3} or {"tie", [3, 5]}
-  end
+      socket
+      |> assign(:remaining_cards, remaining_cards)
+      |> assign(:current_card, next_card)
+      |> assign(:outcome, nil)
+      |> assign(:completed_cards, [latest_card | socket.assigns[:completed_cards]])
+    end
 
-  defp update_state_with_story_point_calculation(outcome, results, socket) do
-    socket
-    |> assign(:outcome, outcome)
-    |> assign(:results, results)
-  end
-
-  defp save_card_points(points, %{assigns: %{current_card: current_card}} = socket) do
-    updated_card = Map.put(current_card, :points, points)
-
-    socket
-    |> assign(:current_card, updated_card)
-  end
-
-  defp reset_state_for_next_card(%{assigns: %{cards: cards, current_card: current_card, completed_cards: completed_cards}} = socket) do
-    {next_card, remaining_cards} = get_next_card(cards)
-
-    socket
-    |> assign(:current_card, next_card)
-    |> assign(:remaining_cards, remaining_cards)
-    |> assign(:completed_cards, [current_card | socket.assigns[:completed_cards]])
-    |> assign(:outcome, nil)
-    |> assign(:results, nil)
-  end
+    def everyone_voted? do
+      @topic
+      |> Presence.list()
+      |> Enum.map(fn {_username, %{metas: [%{points: points}]}} -> points end)
+      |> Enum.all?(&(&1))
+    end
 end
