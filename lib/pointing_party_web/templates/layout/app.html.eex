@@ -16,7 +16,7 @@
           <ul>
             <%= if signed_in?(@conn) do %>
               <li>Hi, <%= @conn.assigns.username %></li>
-              <li><%= link "Log Out", to: Routes.session_path(@conn, :delete), method: :delete, class: "nav-link" %></li>
+              <li><%= link "Log Out", to: "/logout", method: :delete, class: "nav-link" %></li>
             <% else %>
               <li><%= link "Log In", to: Routes.session_path(@conn, :new), class: "nav-link" %></li>
             <% end %>

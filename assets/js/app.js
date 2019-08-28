@@ -16,5 +16,13 @@ import "phoenix_html"
 // Local files can be imported directly using relative paths, for example:
 import LiveSocket from "phoenix_live_view"
 
-const liveSocket = new LiveSocket("/live")
+let Hooks = {}
+Hooks.UserLeft = {
+  updated(){
+    alert(this.el.innerHTML + " Left!!")
+  }
+}
+
+
+const liveSocket = new LiveSocket("/live", {hooks: Hooks})
 liveSocket.connect()

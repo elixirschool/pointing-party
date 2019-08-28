@@ -38,10 +38,42 @@ defmodule PointingPartyWeb.CardLive do
   def handle_info(
     %{event: "presence_diff", payload: payload},
     socket) do
+    leaves = Map.keys(payload.leaves) |> List.first()
+    IO.puts "LEAVES"
+    IO.inspect leaves
     users = Presence.list(@topic)
-
-    {:noreply, assign(socket, users: users)}
+    updated_socket = update_socket_with_leaves(socket, users, leaves)
+    {:noreply, updated_socket}
   end
+
+  def handle_event("vote_submit", %{"points" => points}, socket) do
+    Presence.update(self(), @topic, socket.assigns.username, %{points: points})
+    if everyone_voted?() do
+      {outcome, point_tally} = VoteCalculator.calculate_votes(Presence.list(@topic))
+      Endpoint.broadcast(@topic, "votes_calculated", %{outcome: outcome, point_tally: point_tally})
+    end
+    {:noreply, socket}
+  end
+
+  def handle_event("next_card", winning_points, socket) do
+    Endpoint.broadcast(@topic, "new_card", %{points: winning_points})
+    {:noreply, socket}
+  end
+
+  def handle_info(%{event: "new_card", payload: %{points: points}}, socket) do
+    updated_socket = save_vote_next_card(points, socket)
+    Presence.update(self(), @topic, socket.assigns.username, %{points: nil})
+    {:noreply, updated_socket}
+  end
+
+  def handle_info(%{event: "votes_calculated", payload: payload}, socket) do
+    updated_socket =
+      socket
+      |> assign(:outcome, payload.outcome)
+      |> assign(:point_tally, payload.point_tally)
+    {:noreply, updated_socket}
+  end
+
 
 
   ## Helper Methods ##
@@ -54,8 +86,9 @@ defmodule PointingPartyWeb.CardLive do
       remaining_cards: [],
       completed_cards: [],
       point_tally: nil,
-      users: [],
-      username: username
+      users: Presence.list(@topic),
+      username: username,
+      leaves: nil
     ]
   end
 
@@ -74,6 +107,7 @@ defmodule PointingPartyWeb.CardLive do
     |> assign(:remaining_cards, remaining_cards)
     |> assign(:current_card, next_card)
     |> assign(:outcome, nil)
+    |> assign(:point_tally, nil)
     |> assign(:completed_cards, [latest_card | socket.assigns[:completed_cards]])
   end
 
@@ -82,5 +116,16 @@ defmodule PointingPartyWeb.CardLive do
     |> Presence.list()
     |> Enum.map(fn {_username, %{metas: [%{points: points}]}} -> points end)
     |> Enum.all?(&(&1))
+  end
+
+  def update_socket_with_leaves(socket, users, nil) do
+    socket
+    |> assign(users: users)
+  end
+
+  def update_socket_with_leaves(socket, users, leaves) do
+    socket
+    |> assign(:users, users)
+    |> assign(:leaves, leaves)
   end
 end
