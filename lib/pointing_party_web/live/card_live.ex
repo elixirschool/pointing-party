@@ -65,11 +65,4 @@ defmodule PointingPartyWeb.CardLive do
     |> assign(:outcome, nil)
     |> assign(:completed_cards, [latest_card | socket.assigns[:completed_cards]])
   end
-
-  def everyone_voted? do
-    @topic
-    |> Presence.list()
-    |> Enum.map(fn {_username, %{metas: [%{points: points}]}} -> points end)
-    |> Enum.all?(&(&1))
-  end
 end
