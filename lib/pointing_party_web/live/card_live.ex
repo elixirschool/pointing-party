@@ -2,23 +2,35 @@ defmodule PointingPartyWeb.CardLive do
   use Phoenix.LiveView
 
   alias PointingParty.{Card, VoteCalculator}
+  alias PointingPartyWeb.Endpoint
+  @topic "pointing_party"
 
   def render(assigns) do
     Phoenix.View.render(PointingPartyWeb.CardView, "index.html", assigns)
   end
 
   def mount(%{username: _username}, socket) do
+    Endpoint.subscribe(@topic)
     {:ok, assign(socket, initial_state())}
   end
 
   def handle_event("start_party", _value, socket) do
     [first_card | remaining_cards] = Card.cards()
-    updated_socket =
-      socket
-      |> assign(:is_pointing, true)
-      |> assign(:current_card, first_card)
-      |> assign(:remaining_cards, remaining_cards)
-    {:noreply, updated_socket}
+    payload = %{card: first_card, remaining: remaining_cards}
+    Endpoint.broadcast(@topic, "party_started", payload)
+    {:noreply, socket}
+  end
+
+  def handle_info(%{
+    event: "party_started",
+    payload: %{card: card, remaining: remaining},
+    topic: @topic}, socket) do
+
+      {:noreply, assign(
+        socket,
+        current_card: card,
+        remaining_cards: remaining,
+        is_pointing: true)}
   end
 
   ## Helper Methods ##
