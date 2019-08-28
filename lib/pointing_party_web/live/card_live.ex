@@ -48,28 +48,28 @@ defmodule PointingPartyWeb.CardLive do
       ]
     end
 
-    defp save_vote_next_card(points, socket) do
-      latest_card =
-        socket.assigns
-        |> Map.get(:current_card)
-        |> Map.put(:points, points)
+  defp save_vote_next_card(points, socket) do
+    latest_card =
+      socket.assigns
+      |> Map.get(:current_card)
+      |> Map.put(:points, points)
 
-      {next_card, remaining_cards} =
-        socket.assigns
-        |> Map.get(:remaining_cards)
-        |> List.pop_at(0)
+    {next_card, remaining_cards} =
+      socket.assigns
+      |> Map.get(:remaining_cards)
+      |> List.pop_at(0)
 
-      socket
-      |> assign(:remaining_cards, remaining_cards)
-      |> assign(:current_card, next_card)
-      |> assign(:outcome, nil)
-      |> assign(:completed_cards, [latest_card | socket.assigns[:completed_cards]])
-    end
+    socket
+    |> assign(:remaining_cards, remaining_cards)
+    |> assign(:current_card, next_card)
+    |> assign(:outcome, nil)
+    |> assign(:completed_cards, [latest_card | socket.assigns[:completed_cards]])
+  end
 
-    def everyone_voted? do
-      @topic
-      |> Presence.list()
-      |> Enum.map(fn {_username, %{metas: [%{points: points}]}} -> points end)
-      |> Enum.all?(&(&1))
-    end
+  def everyone_voted? do
+    @topic
+    |> Presence.list()
+    |> Enum.map(fn {_username, %{metas: [%{points: points}]}} -> points end)
+    |> Enum.all?(&(&1))
+  end
 end
