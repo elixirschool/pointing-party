@@ -11,6 +11,16 @@ defmodule PointingPartyWeb.CardLive do
     {:ok, assign(socket, initial_state())}
   end
 
+  def handle_event("start_party", _value, socket) do
+    [first_card | remaining_cards] = Card.cards()
+    updated_socket =
+      socket
+      |> assign(:is_pointing, true)
+      |> assign(:current_card, first_card)
+      |> assign(:remaining_cards, remaining_cards)
+    {:noreply, updated_socket}
+  end
+
   ## Helper Methods ##
 
   defp initial_state do

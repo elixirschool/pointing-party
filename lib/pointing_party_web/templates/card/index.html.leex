@@ -2,7 +2,7 @@
   <div class="card-container col-10">
     <%= if !@is_pointing do %>
       <div class="col-md-4 text-center">
-        <button class="btn-primary">Start the Party!</button>
+        <button class="btn-primary" phx-click="start_party">Start the Party!</button>
       </div>
     <% else %>
       <div class="card text-left">
