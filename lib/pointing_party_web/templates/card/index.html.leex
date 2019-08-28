@@ -11,7 +11,7 @@
         </div>
         <div class="card-body">
           <p class="card-text"><%= @current_card.description %></p>
-          <form class="form-group text-left points-container">
+          <form class="form-group text-left points-container" phx-submit="vote">
             <div class="form-row align-items-center">
               <div class="col-2">
                 <label for="story-points">Story Points</label>
@@ -25,8 +25,8 @@
             </div>
 
             <%= if @outcome == "winner" do %>
-              <p>Winner: <%= @results %> Points</p>
-              <button class="btn btn-primary">
+              <p>Winner: <%= @point_tally %> Points</p>
+              <button class="btn btn-primary" phx-click="next_card" phx-value="<%= @point_tally %>">
                 Next Card
               </button>
             <% end %>
@@ -34,12 +34,16 @@
             <%= if @outcome == "tie" do %>
               <p>TIE!</p>
 
-              <button class="btn btn-primary">
-                Pick <%= List.first(@results) %>
+              <button class="btn btn-primary"
+                phx-click="next_card"
+                phx-value="<%= List.first(@point_tally)%>">
+                Pick <%= List.first(@point_tally) %>
               </button>
 
-              <button class="btn btn-primary">
-                Pick <%= List.last(@results) %>
+              <button class="btn btn-primary"
+                phx-click="next_card"
+                phx-value="<%= List.first(@point_tally)%>">
+                Pick <%= List.last(@point_tally) %>
               </button>
             <% end %>
 
