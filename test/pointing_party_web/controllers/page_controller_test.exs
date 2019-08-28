@@ -1,11 +1,9 @@
 defmodule PointingPartyWeb.PageControllerTest do
   use PointingPartyWeb.ConnCase
 
-  @username "test_user"
-
   describe "authenticated user" do
     setup  %{conn: conn} do
-      conn = Plug.Conn.assign(conn, :username, @username)
+      conn = Plug.Conn.assign(conn, :username, "test_user")
       {:ok, %{conn: conn}}
     end
 

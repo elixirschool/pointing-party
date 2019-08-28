@@ -39,14 +39,14 @@ defmodule PointingPartyWeb.CardLive do
 
   defp calculate_story_points(users) do
     VoteCalculator.calculate_votes(users)
-    # returns {outcome, results}
+    # returns {outcome, point_tally}
     # ex - {"winner", 3} or {"tie", [3, 5]}
   end
 
-  defp update_state_with_story_point_calculation(outcome, results, socket) do
+  defp update_state_with_story_point_calculation(outcome, point_tally, socket) do
     socket
     |> assign(:outcome, outcome)
-    |> assign(:results, results)
+    |> assign(:point_tally, point_tally)
   end
 
   defp save_card_points(points, %{assigns: %{current_card: current_card}} = socket) do
@@ -64,6 +64,6 @@ defmodule PointingPartyWeb.CardLive do
     |> assign(:remaining_cards, remaining_cards)
     |> assign(:completed_cards, [current_card | socket.assigns[:completed_cards]])
     |> assign(:outcome, nil)
-    |> assign(:results, nil)
+    |> assign(:point_tally, nil)
   end
 end
