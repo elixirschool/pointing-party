@@ -18,11 +18,10 @@ defmodule PointingPartyWeb.CardLive do
       current_card: nil,
       outcome: nil,
       is_pointing: false,
-      points_range: Card.points_range(),
       remaining_cards: [],
+      completed_cards: [],
       point_tally: nil,
-      users: [],
-      completed_cards: []
+      users: []
     ]
   end
 
@@ -53,7 +52,7 @@ defmodule PointingPartyWeb.CardLive do
     updated_card = Map.put(current_card, :points, points)
 
     socket
-    |> assigns(:current_card, updated_card)
+    |> assign(:current_card, updated_card)
   end
 
   defp reset_state_for_next_card(%{assigns: %{cards: cards, current_card: current_card, completed_cards: completed_cards}} = socket) do

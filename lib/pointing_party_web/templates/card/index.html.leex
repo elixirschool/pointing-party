@@ -1,6 +1,6 @@
 <div class="row">
   <div class="card-container col-10">
-    <%= if !@pointing do %>
+    <%= if !@is_pointing do %>
       <div class="col-md-4 text-center">
         <button class="btn-primary">Start the Party!</button>
       </div>
@@ -16,8 +16,8 @@
               <div class="col-2">
                 <label for="story-points">Story Points</label>
                 <select name="points" class="form-control story-points" id="story-points">
+                  <option value="0">0</option>
                   <option value="1">1</option>
-                  <option value="2">2</option>
                   <option value="3">3</option>
                   <option value="5">5</option>
                 </select>
