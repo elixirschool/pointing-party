@@ -4,7 +4,7 @@ defmodule PointingPartyWeb.CardLive do
   alias PointingParty.{Card, VoteCalculator}
 
   def render(assigns) do
-    Phoenix.View.render(PointingPartyWeb.CardView, "index.html", assigns)
+    # render the LiveView template here
   end
 
   def mount(%{username: _username}, socket) do
@@ -53,7 +53,7 @@ defmodule PointingPartyWeb.CardLive do
     updated_card = Map.put(current_card, :points, points)
 
     socket
-    |> assigns(:current_card, updated_card)
+    |> assign(:current_card, updated_card)
   end
 
   defp reset_state_for_next_card(%{assigns: %{cards: cards, current_card: current_card, completed_cards: completed_cards}} = socket) do

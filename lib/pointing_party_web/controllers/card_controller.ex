@@ -5,7 +5,6 @@ defmodule PointingPartyWeb.CardController do
 
   def index(conn, _params) do
     %{assigns: %{username: username}} = conn
-
-    live_render(conn, PointingPartyWeb.CardLive, session: %{username: username})
+    # render the LiveView here
   end
 end
